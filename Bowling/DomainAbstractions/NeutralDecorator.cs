@@ -1,0 +1,129 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ProgrammingParadigms;
+using System.Text;
+
+namespace DomainAbstractions
+{
+    /// <summary>
+    /// Prerequisites to understanding
+    /// To understand the full background and reasoning behind this abstraction, you need to know about ALA which is explained here 'abstractionlayeredarchitecture.com'
+    /// Additional prerequisite knowledge is the Decorator pattern, which along with composite is the most common pattern in ALA (displacing the Observer (Publish/Subscribe) pattern.) 
+    /// A decorator implements and accepts the same interface, and usually passes most methods straight through
+    /// so it can be inserted between any other two abstractions that are connected by that interface without affecting operation
+    /// except by modifying the behaviour on that interface in one specific way.
+    /// 
+    /// NeutralDecorator is not a useful abstraction in itself - it is an inert decorator of the IConsistsOf<TScore> interface
+    /// - that is it can be inserted between any two objects wired using the IConsists interface and it doesn't change the behaviour.
+    /// - all methods are effectively passed through
+    /// It is used as a copy/paste starting point for making new abstractions e.g. Bonuses and WinnerGetsOnePoint
+
+    public class NeutralDecorator : IConsistsOf
+    {
+        private string objectName;                      // Just used to identify objects druing debugging. Becasue ALA makes many instances from abstractions, it is useful for them to be identifiable during debug  (e.g. can be used to compare before Console.Writeline)
+        private readonly int frameNumber = 0;           // This is our child number of our parent, also useful to identify instances (sometimes a lambda expressions may want to use this)
+
+
+        // local state consists of our single downstream IConsistOf object
+        private IConsistsOf downStreamFrame; // 
+
+
+
+        public NeutralDecorator(string name)
+        {
+             objectName = name;  
+        }
+
+
+
+
+        public NeutralDecorator(int frameNumber)
+        {
+            this.frameNumber = frameNumber;
+        }
+
+
+
+        // This method is provided by an extension method in the project 'Wiring'.
+        // The extension method uses reflection to do the same thing
+        // The method returns the object it is called on to support fluent coding style
+
+        /*
+        public NeutralDecorator WireTo(IConsistsOf c)
+        {
+            downStreamFrame = c;
+            return this;
+        }
+        */
+
+
+        public void Ball(int player, int score)
+        {
+            if (downStreamFrame != null) downStreamFrame.Ball(player, score);
+        }
+
+
+        private bool IsComplete()
+        {
+            return downStreamFrame.IsComplete();
+        }
+
+
+        bool IConsistsOf.IsComplete() { return IsComplete(); }
+
+
+        private int GetnPlays() { return downStreamFrame.GetnPlays(); }
+
+        int IConsistsOf.GetnPlays() { return GetnPlays(); }
+
+        private int[] GetScore() { return downStreamFrame.GetScore(); }
+
+        int[] IConsistsOf.GetScore() { return GetScore(); }
+ 
+
+        List<IConsistsOf> IConsistsOf.GetSubFrames()
+        {
+            return downStreamFrame.GetSubFrames();
+        }
+
+
+
+        IConsistsOf IConsistsOf.GetCopy(int frameNumber)
+        {
+            // Copy both the decorator and the object it's conencted to
+            var bs = new NeutralDecorator(frameNumber);
+            if (downStreamFrame != null)
+            {
+                bs.downStreamFrame = downStreamFrame.GetCopy(frameNumber);
+            }
+            return bs as IConsistsOf;
+        }
+
+
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("frameNumber = "); sb.Append(frameNumber); sb.Append(Environment.NewLine);
+            sb.Append("nPlays = "); sb.Append(GetnPlays()); sb.Append(Environment.NewLine);
+            sb.Append("localScore = "); sb.Append(GetScore()[0]); sb.Append(","); sb.Append(GetScore()[1]); sb.Append(Environment.NewLine);
+            sb.Append("ourFrameComplete = "); sb.Append(IsComplete()); sb.Append(Environment.NewLine);
+            if (downStreamFrame == null) sb.Append("no downstream frame");
+            else
+            {
+                sb.Append("===================" + Environment.NewLine);
+                string sf = downStreamFrame.ToString();
+                string[] lines = sf.Split(new string[] { Environment.NewLine }, System.StringSplitOptions.RemoveEmptyEntries);
+                foreach (string line in lines)
+                {
+                    sb.Append("----" + line + Environment.NewLine);
+                }
+            }
+            return sb.ToString();
+        }
+
+    }
+}
+
+

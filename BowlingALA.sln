@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{D3CC29F1-19CA-441C-A28F-E94E70772AFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameScoring", "Bowling\GameScoring.csproj", "{D03F8AC5-2AB4-4DA1-9386-011C7F575221}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wiring", "Wiring\Wiring.csproj", "{35752F4C-DA45-4D71-8B27-E34CD0FBDCE8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D3CC29F1-19CA-441C-A28F-E94E70772AFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3CC29F1-19CA-441C-A28F-E94E70772AFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3CC29F1-19CA-441C-A28F-E94E70772AFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3CC29F1-19CA-441C-A28F-E94E70772AFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D03F8AC5-2AB4-4DA1-9386-011C7F575221}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D03F8AC5-2AB4-4DA1-9386-011C7F575221}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D03F8AC5-2AB4-4DA1-9386-011C7F575221}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D03F8AC5-2AB4-4DA1-9386-011C7F575221}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35752F4C-DA45-4D71-8B27-E34CD0FBDCE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35752F4C-DA45-4D71-8B27-E34CD0FBDCE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35752F4C-DA45-4D71-8B27-E34CD0FBDCE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35752F4C-DA45-4D71-8B27-E34CD0FBDCE8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

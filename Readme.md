@@ -5,12 +5,13 @@ The project implements a game scoring application for Tenpin Bowling using ALA, 
 
 ## Getting Started
 
-Read abstractionlayeredarchitecture.com to understand the architeture of the code.
-Install Visual Studio for C# community edition.
-Clone the git repsoitory.
-Inspect the code of the aplications and/or the domain abstractions.
-Run the tests.
-Run the console application.
+. Read abstractionlayeredarchitecture.com to understand the architeture of the code.
+. Inspect the code of the aplications and/or the domain abstractions to see the example of ALA structure.
+* optional:
+. Install Visual Studio for C# community edition.
+. Clone the git repsoitory.
+. Run the tests.
+. Run the console application.
 
 ## Running the tests
 

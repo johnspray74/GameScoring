@@ -21,7 +21,7 @@ Optional:
 
 ## Running the tests
 
-In visual Studio, open a test file, right click on a test or test set, and run the tests.
+In Visual Studio, open a test file, right click a test set, and run the tests.
 
 ## Authors
 

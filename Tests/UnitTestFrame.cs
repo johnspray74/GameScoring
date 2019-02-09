@@ -76,7 +76,7 @@ namespace Tests
         [TestMethod]
         public void TestCompleteMethodScore()
         {
-            this.frame.setIsFrameCompleteLambda((frameNumber, nPlays, score) => score[0] ==10);
+            this.frame.setIsFrameCompleteLambda((frameNumber, nPlays, score) => score[0] == 10);
             IConsistsOf frame = this.frame;
             Assert.IsFalse(frame.IsComplete());
             frame.Ball(0, 9);
@@ -89,6 +89,7 @@ namespace Tests
         public void TestCompleteMethodframeNumber()
         {
             // This test also tests GetCopy
+            // set the completion lambda function for the frame object under test to complete only if it is the 2nd frame of its parent
             this.frame.setIsFrameCompleteLambda((frameNumber, nPlays, score) => frameNumber == 1);
             IConsistsOf frame = this.frame;
             frame.Ball(0, 1);
@@ -111,57 +112,7 @@ namespace Tests
             L = frame.GetSubFrames();
             Assert.AreEqual(2, L.Count);
         }
-
-
-        /*
-        [TestMethod]
-        public void TestAllPinsDownInTwoBalls()
-        {
-            IFrame f = new Frame(2);
-            f.Start();
-            f.Play(5);
-            f.Play(5);
-            Assert.IsTrue(f.IsFrameComplete());
-        }
-
-        [TestMethod]
-        public void TestAllPinsDownInOneBall()
-        {
-            IFrame f = new Frame(2);
-            f.Start();
-            f.Play(10);
-            Assert.IsTrue(f.IsFrameComplete());
-        }
-
-        [TestMethod]
-        public void TestExceptionIfWeTryToKnockDownMoreThan10Pins()
-        {
-            IFrame f = new Frame(2);
-            f.Start();
-            f.Play(9);
-            try {
-                f.Play(2);
-            } catch (Exception ex)
-            {
-                Assert.IsTrue(ex.Message == "Can't bowl more balls when game is over");
-                
-            }
-        }
-
-        [TestMethod]
-        public void TestThreeBallFrame()
-        {
-            IFrame f = new Frame(3);
-            f.Start();
-            f.Play(7);
-            f.Play(1);
-            Assert.IsFalse(f.IsFrameComplete());
-            f.Play(1);
-            Assert.IsTrue(f.IsFrameComplete());
-        }
-        */
     }
-    // TODO can we move these tests to Frame.cs, but keep in the test project?
 
 }
 

@@ -12,8 +12,8 @@ namespace Application
     {
         static void Main(string[] args)
         {
-            // var game = new Tennis();
-            var game = new Bowling();
+            var game = new Tennis();
+            // var game = new Bowling();
 
             // Console.Write(game.ToString());
             // Console.WriteLine();

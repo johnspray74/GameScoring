@@ -1,0 +1,26 @@
+I had a problem where either the test dll would not load or the tests would not run (stay blue)
+This took almost 24 hours to figure out.
+The same solution would run on my laptop.
+Eventually figured out it was becasue the output test.dll files were on a network drive (in a VM).
+There were many suggestiones for how to fix, and many different config files suggested, but none worked until I tried this one:
+
+
+<configuration>
+   <runtime>
+      <loadFromRemoteSources enabled="true"/>
+   </runtime>
+...
+
+Put into these:
+
+
+"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\Config\machine.config"
+
+"C:\Windows\Microsoft.NET\Framework\v4.0.30319\Config\machine.config"
+
+
+Source:
+https://stackoverflow.com/questions/3236506/visual-studio-test-wont-run-over-a-network-share
+https://stackoverflow.com/questions/35613563/mstest-fails-to-load-dll-from-network-share
+https://stackoverflow.com/questions/38734045/nunit-failed-to-load-dll#tab-top
+http://b2ben.blogspot.com/2014/07/running-visual-studio-tests-from.html

@@ -70,11 +70,14 @@ namespace Application
         public string GetScore()
         {
             // returns score in the form:
-            // Set score = 6 4   2 0      Game score = 30,love
+            // match score = 2,1   Set scores = 6 4   2 0      Game score = 30,love
             // If in a tiebreak:
             // Set score = 6 4   6 6      Game score = 6,5
             StringBuilder sb = new StringBuilder();
-            sb.Append("Set score = ");
+            sb.Append("Match score = ");
+            sb.Append(GetTotalScore()[0] + " " + GetTotalScore()[1]);
+            sb.Append("   ");
+            sb.Append("Set scores = ");
             GetSetScores().Aggregate(sb, (s1, n) => s1.Append(n[0].ToString() + " " + n[1].ToString() + "   "));
             sb.Append("   ");
             sb.Append("Game score = "); sb.Append(GetGameScore());
@@ -102,8 +105,8 @@ namespace Application
                     .GetSubFrames().Last()     // WinnerGetsOnPoint of last game
                     .GetSubFrames().First()    // current game object
                     .GetScore();
-                if (gamescore[0] >= 4 && gamescore[0] >= gamescore[1] + 2) return "win 0";
-                if (gamescore[1] >= 4 && gamescore[1] >= gamescore[0] + 2) return "win 1";
+                if (gamescore[0] >= 4 && gamescore[0] >= gamescore[1] + 2) return "game 0";
+                if (gamescore[1] >= 4 && gamescore[1] >= gamescore[0] + 2) return "game 1";
                 if (gamescore[0] >= 3 && gamescore[1] >= 3)
                 {
                     if (gamescore[0] > gamescore[1]) return "adv 0";
@@ -132,6 +135,10 @@ namespace Application
         }
 
 
+        public int[] GetTotalScore()
+        {
+            return match.GetScore();
+        }
 
 
         // Gets all the set scores as a List e.g. int[] { 6, 4}, {5, 7}, {6, 2}, {8, 6}

@@ -36,7 +36,7 @@ namespace Tests
             game.Play(0);
             Assert.AreEqual("40,love", game.GetGameScore());
             game.Play(0);
-            Assert.AreEqual("win 0", game.GetGameScore());
+            Assert.AreEqual("game 0", game.GetGameScore());
         }
 
         [TestMethod]
@@ -49,7 +49,7 @@ namespace Tests
             game.Play(1);
             Assert.AreEqual("love,40", game.GetGameScore());
             game.Play(1);
-            Assert.AreEqual("win 1", game.GetGameScore());
+            Assert.AreEqual("game 1", game.GetGameScore());
         }
 
         [TestMethod]
@@ -73,7 +73,7 @@ namespace Tests
             game.Play(0);
             Assert.AreEqual("adv 0", game.GetGameScore());
             game.Play(0);
-            Assert.AreEqual("win 0", game.GetGameScore());
+            Assert.AreEqual("game 0", game.GetGameScore());
         }
 
         [TestMethod]
@@ -97,7 +97,7 @@ namespace Tests
             game.Play(1);
             Assert.AreEqual("adv 1", game.GetGameScore());
             game.Play(1);
-            Assert.AreEqual("win 1", game.GetGameScore());
+            Assert.AreEqual("game 1", game.GetGameScore());
         }
 
 

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProgrammingParadigms;
+using GameScoring.ProgrammingParadigms;
 using System.Text;
 
-namespace DomainAbstractions
+namespace GameScoring.DomainAbstractions
 {
     /// <summary>
     /// Prerequisites to understanding
@@ -16,8 +16,7 @@ namespace DomainAbstractions
     /// TwoPlayer is a Decorator pattern of the IConsistsOf<TScore> interface
     /// - it converts a pair of player scores from downstream into a single point to one player when the downstream object completes.
     /// for example, in tennis it is used to convert two set scores like 7,6 into an increment of player 0's score  
-
-
+    /// </summary>
     public class WinnerTakesPoint : IConsistsOf
     {
         private string objectName;  // used to identify objects druing debugging (e.g. can be used to compare before Console.Writeline) Becasue of ALA use of abstractions, instances must be identifiable during debug

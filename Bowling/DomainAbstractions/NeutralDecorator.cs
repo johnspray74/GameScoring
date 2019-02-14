@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProgrammingParadigms;
+using GameScoring.ProgrammingParadigms;
 using System.Text;
 
 namespace DomainAbstractions
@@ -18,7 +18,7 @@ namespace DomainAbstractions
     /// - that is it can be inserted between any two objects wired using the IConsists interface and it doesn't change the behaviour.
     /// - all methods are effectively passed through
     /// It is used as a copy/paste starting point for making new abstractions e.g. Bonuses and WinnerGetsOnePoint
-
+    /// </summary>
     public class NeutralDecorator : IConsistsOf
     {
         private string objectName;                      // Just used to identify objects druing debugging. Becasue ALA makes many instances from abstractions, it is useful for them to be identifiable during debug  (e.g. can be used to compare before Console.Writeline)
@@ -26,7 +26,7 @@ namespace DomainAbstractions
 
 
         // local state consists of our single downstream IConsistOf object
-        private IConsistsOf downStreamFrame; // 
+        private IConsistsOf downStream; // 
 
 
 
@@ -60,31 +60,31 @@ namespace DomainAbstractions
 
         public void Ball(int player, int score)
         {
-            if (downStreamFrame != null) downStreamFrame.Ball(player, score);
+            if (downStream != null) downStream.Ball(player, score);
         }
 
 
         private bool IsComplete()
         {
-            return downStreamFrame.IsComplete();
+            return downStream.IsComplete();
         }
 
 
         bool IConsistsOf.IsComplete() { return IsComplete(); }
 
 
-        private int GetnPlays() { return downStreamFrame.GetnPlays(); }
+        private int GetnPlays() { return downStream.GetnPlays(); }
 
         int IConsistsOf.GetnPlays() { return GetnPlays(); }
 
-        private int[] GetScore() { return downStreamFrame.GetScore(); }
+        private int[] GetScore() { return downStream.GetScore(); }
 
         int[] IConsistsOf.GetScore() { return GetScore(); }
  
 
         List<IConsistsOf> IConsistsOf.GetSubFrames()
         {
-            return downStreamFrame.GetSubFrames();
+            return downStream.GetSubFrames();
         }
 
 
@@ -93,9 +93,9 @@ namespace DomainAbstractions
         {
             // Copy both the decorator and the object it's conencted to
             var bs = new NeutralDecorator(frameNumber);
-            if (downStreamFrame != null)
+            if (downStream != null)
             {
-                bs.downStreamFrame = downStreamFrame.GetCopy(frameNumber);
+                bs.downStream = downStream.GetCopy(frameNumber);
             }
             return bs as IConsistsOf;
         }
@@ -109,11 +109,11 @@ namespace DomainAbstractions
             sb.Append("nPlays = "); sb.Append(GetnPlays()); sb.Append(Environment.NewLine);
             sb.Append("localScore = "); sb.Append(GetScore()[0]); sb.Append(","); sb.Append(GetScore()[1]); sb.Append(Environment.NewLine);
             sb.Append("ourFrameComplete = "); sb.Append(IsComplete()); sb.Append(Environment.NewLine);
-            if (downStreamFrame == null) sb.Append("no downstream frame");
+            if (downStream == null) sb.Append("no downstream frame");
             else
             {
                 sb.Append("===================" + Environment.NewLine);
-                string sf = downStreamFrame.ToString();
+                string sf = downStream.ToString();
                 string[] lines = sf.Split(new string[] { Environment.NewLine }, System.StringSplitOptions.RemoveEmptyEntries);
                 foreach (string line in lines)
                 {

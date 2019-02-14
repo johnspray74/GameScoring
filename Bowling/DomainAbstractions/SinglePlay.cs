@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProgrammingParadigms;
+using GameScoring.ProgrammingParadigms;
 using System.Text;
 
-namespace DomainAbstractions
+namespace GameScoring.DomainAbstractions
 {
     /// <summary>
     /// To understand the full background and reasoning behind this abstraction, you need to know about ALA which is explained here 'abstractionlayeredarchitecture.com'
@@ -13,8 +13,7 @@ namespace DomainAbstractions
     /// It cannot have any children like the GrameFrame or Bonus abstractions can.
     /// In terms of functional programming, it doesn't pass function calls onto children, it returns local state.
     /// It always completes after one play. It does not take a completion lambda like some of the other domain abstractions.
-
-
+    /// </summary>
     public class SinglePlay : IConsistsOf
     {
 

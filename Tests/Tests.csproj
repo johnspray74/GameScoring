@@ -62,8 +62,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="AcceptanceTestsBowling.cs" />
-    <Compile Include="AcceptanceTestsTennis.cs" />
+    <Compile Include="TestsScoringEnginesBowling.cs" />
+    <Compile Include="TestsScoringEngineTennis.cs" />
     <Compile Include="UnitTestFrame.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

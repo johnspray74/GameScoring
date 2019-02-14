@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProgrammingParadigms;
+using GameScoring.ProgrammingParadigms;
 using System.Text;
 
-namespace DomainAbstractions
+namespace GameScoring.DomainAbstractions
 {
     /// <summary>
     /// Knowledge prequisites:
@@ -14,14 +14,14 @@ namespace DomainAbstractions
     /// For example, in Tennis you would use one instance for the match, one for the set, and one for the game.
     /// For example, in 10-pin bowling you would use one for the game, and one for the frame.
     /// Frame basically implements a composite design pattern. It has a list of itself or any other objects that implement the IConsistsOf interface.
-
+    ///
     /// To use this abstraction to build a game you instantiate one of each type of Frame and wire them together.
     /// As the game progresses, it will create instances in a composite pattern (tree) by making copies of these prototypes (prototype pattern).
     /// The meaning of the wiring (Programming paradigm) is 'Consists of'
     /// For example, in tennis, A Match 'consists of' Sets which 'consists of' Games.
     /// in Bowling, a games consists of frames, which consists of throws.
     /// The programming paradigm interface name is therefore "IConsistsOf"
-
+    ///
     /// The abstraction instances are configured with a lambda expression that tells it when the Frame completes.
     /// It is a function of the state of the frame, e.g. frameNumber/plays/score, 
     /// (where for example, in a Bowling frame, frameNumber is 1st, 2nd 3rd child frame of the game)
@@ -29,8 +29,7 @@ namespace DomainAbstractions
     /// For a tennes set the lambda is (setNumber, nGames, score) => score.Max() >= 6 && Math.Abs(score[0] - score[1]) >= 2
     /// If no completion lambda expression is provided, the frame completes when its first subframe completes
     /// The Frame always passes the Ball score to all it's children, whether they are complete or not, in case they want to do something with it after they are complete.
-
-
+    /// </summary>
     public class Frame : IConsistsOf
     {
 

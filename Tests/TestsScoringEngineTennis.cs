@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Application;
+using GameScoring.Application;
 
 namespace Tests
 {
     [TestClass]
-    public class AcceptanceTestsTennis1
+    public class TestsScoringEngineTennis
     {
         Tennis game;
 
@@ -28,77 +28,63 @@ namespace Tests
         [TestMethod]
         public void TestSimpleGameScoring0()
         {
-            Assert.AreEqual("", game.GetGameScore());
-            game.Play(0);
-            Assert.AreEqual("15,love", game.GetGameScore());
-            game.Play(0);
-            Assert.AreEqual("30,love", game.GetGameScore());
-            game.Play(0);
-            Assert.AreEqual("40,love", game.GetGameScore());
-            game.Play(0);
-            Assert.AreEqual("game 0", game.GetGameScore());
+            CheckGameScore("", "");
+            game.Play(0); CheckGameScore("15", "love");
+            game.Play(0); CheckGameScore("30", "love");
+            game.Play(0); CheckGameScore("40", "love");
+            game.Play(0); CheckGameScore("game", "");
         }
 
         [TestMethod]
         public void TestSimpleGameScoring1()
         {
-            game.Play(1);
-            Assert.AreEqual("love,15", game.GetGameScore());
-            game.Play(1);
-            Assert.AreEqual("love,30", game.GetGameScore());
-            game.Play(1);
-            Assert.AreEqual("love,40", game.GetGameScore());
-            game.Play(1);
-            Assert.AreEqual("game 1", game.GetGameScore());
+            game.Play(1); CheckGameScore("love", "15");
+            game.Play(1); CheckGameScore("love", "30");
+            game.Play(1); CheckGameScore("love", "40");
+            game.Play(1); CheckGameScore("", "game");
         }
 
         [TestMethod]
         public void TestSimpleAlternating0()
         {
             game.Play(0);
-            game.Play(1);
-            Assert.AreEqual("15,15", game.GetGameScore());
-            game.Play(0);
-            Assert.AreEqual("30,15", game.GetGameScore());
-            game.Play(1);
-            Assert.AreEqual("30,30", game.GetGameScore());
-            game.Play(0);
-            Assert.AreEqual("40,30", game.GetGameScore());
-            game.Play(1);
-            Assert.AreEqual("deuce", game.GetGameScore());
-            game.Play(1);
-            Assert.AreEqual("adv 1", game.GetGameScore());
-            game.Play(0);
-            Assert.AreEqual("deuce", game.GetGameScore());
-            game.Play(0);
-            Assert.AreEqual("adv 0", game.GetGameScore());
-            game.Play(0);
-            Assert.AreEqual("game 0", game.GetGameScore());
+            game.Play(1); CheckGameScore("15", "15");
+            game.Play(0); CheckGameScore("30", "15");
+            game.Play(1); CheckGameScore("30", "30");
+            game.Play(0); CheckGameScore("40", "30");
+            game.Play(1); CheckGameScore("deuce", "");
+            game.Play(1); CheckGameScore("", "adv");
+            game.Play(0); CheckGameScore("deuce", "");
+            game.Play(0); CheckGameScore("adv", "");
+            game.Play(0); CheckGameScore("game", "");
         }
 
         [TestMethod]
         public void TestSimpleAlternating1()
         {
             game.Play(1);
-            game.Play(0);
-            Assert.AreEqual("15,15", game.GetGameScore());
-            game.Play(1);
-            Assert.AreEqual("15,30", game.GetGameScore());
-            game.Play(0);
-            Assert.AreEqual("30,30", game.GetGameScore());
-            game.Play(1);
-            Assert.AreEqual("30,40", game.GetGameScore());
-            game.Play(0);
-            Assert.AreEqual("deuce", game.GetGameScore());
-            game.Play(0);
-            Assert.AreEqual("adv 0", game.GetGameScore());
-            game.Play(1);
-            Assert.AreEqual("deuce", game.GetGameScore());
-            game.Play(1);
-            Assert.AreEqual("adv 1", game.GetGameScore());
-            game.Play(1);
-            Assert.AreEqual("game 1", game.GetGameScore());
+            game.Play(0); CheckGameScore("15", "15");
+            game.Play(1); CheckGameScore("15", "30");
+            game.Play(0); CheckGameScore("30", "30");
+            game.Play(1); CheckGameScore("30", "40");
+            game.Play(0); CheckGameScore("deuce", "");
+            game.Play(0); CheckGameScore("adv", "");
+            game.Play(1); CheckGameScore("deuce", "");
+            game.Play(1); CheckGameScore("", "adv");
+            game.Play(1); CheckGameScore("", "game");
         }
+
+
+
+        private void CheckGameScore(string s1, string s2)
+        {
+            Assert.AreEqual(s1, game.GetLastGameScore()[0]);
+            Assert.AreEqual(s2, game.GetLastGameScore()[1]);
+        }
+
+
+
+
 
 
         // Test set scoring

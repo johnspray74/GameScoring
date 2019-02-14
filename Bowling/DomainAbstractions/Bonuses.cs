@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProgrammingParadigms;
+using GameScoring.ProgrammingParadigms;
 using System.Text;
 
-namespace DomainAbstractions
+namespace GameScoring.DomainAbstractions
 {
     /// <summary>
     /// Prerequisites to understanding
@@ -20,8 +20,7 @@ namespace DomainAbstractions
     /// These are added to the local score until the local IsComplete lambda function returns true.
     /// For example, in 10-pin bowling you would use this with a lambda of "score<10 || plays==3" so that after the downstream Frame completes, it will keep adding ball scores if the score is already 10, until the total throws is 3.
     /// The lambda is a function of the state of the frame, e.g. plays/score.
-
-
+    /// </summary>
     public class Bonuses : IConsistsOf
     {
         private string objectName;  // used to identify objects during debugging (e.g. can be used to compare before Console.Writeline) Becasue of ALA use of abstractions, instances must be identifiable during debug
@@ -74,14 +73,19 @@ namespace DomainAbstractions
 */
 
  
-        // This is where all the logic for the abstraction is 
-        // We have three things to do
-        // 1. Pass through the Ball function to our downstream frame
-        // 2. Call our local lambda to see if bonuses are complete
-        // 3. After the downstream frame completes, if bonuses are still pending, add further throws to our local score.
-
+        /// <summary>
+        /// Drives the game forward by one play. Use one of the parameters to indicate the result of the play.
+        /// </summary>
+        /// <param name="player">Which player won the play e.g. in tennis 0 or 1</param>
+        /// <param name="score">Or the score on the play e.g. in Bowling the number of pins downed</param>
         public void Ball(int player, int score)
         {
+            // This is where all the logic for the abstraction is 
+            // We have three things to do
+            // 1. Pass through the Ball function to our downstream frame
+            // 2. Call our local lambda to see if bonuses are complete
+            // 3. After the downstream frame completes, if bonuses are still pending, add further throws to our local score.
+
             if (IsScoringComplete()) return;
 
             if (IsComplete() && !IsScoringComplete())

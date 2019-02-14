@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProgrammingParadigms;
+using GameScoring.ProgrammingParadigms;
 using System.Text;
 
-namespace DomainAbstractions
+namespace GameScoring.DomainAbstractions
 {
     /// <summary>
     /// Prerequisites to understanding
@@ -18,7 +18,7 @@ namespace DomainAbstractions
     /// - that is it can be inserted between any two objects wired using the IConsists interface and it doesn't change the behaviour.
     /// - all methods are effectively passed through
     /// It is used as a copy/paste starting point for making new abstractions e.g. Bonuses and WinnerGetsOnePoint
-
+    /// </summary>
     public class Switch : IConsistsOf
     {
         private string objectName;                      // Just used to identify objects druing debugging. Becasue ALA makes many instances from abstractions, it is useful for them to be identifiable during debug  (e.g. can be used to compare before Console.Writeline)

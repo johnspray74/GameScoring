@@ -1,6 +1,6 @@
-﻿using DomainAbstractions;
+﻿using GameScoring.DomainAbstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ProgrammingParadigms;
+using GameScoring.ProgrammingParadigms;
 using System.Collections.Generic;
 using Wiring;
 

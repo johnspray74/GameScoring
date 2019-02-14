@@ -11,8 +11,10 @@ namespace Wiring
         /// <summary>
         /// if object A (this) has a private field of an interface, and object B implements the interface, then wire them together
         /// </summary>
-        /// <param name="A"></param> The object on which the method is called is the the wireFrom object
-        /// <param name="B"></param> The wireTo object 
+        /// <param name="A">
+        /// The object on which the method is called is the the wireFrom object
+        /// </param> 
+        /// <param name="B">The wireTo object</param> 
         /// <returns></returns>
         public static T WireTo<T>(this T A, object B)
         {

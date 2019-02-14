@@ -1,6 +1,8 @@
-# Game Scoring project example for ALA (Abstraction Layered Architecture)
+# Game Scoring project example for ALA
+(Abstraction Layered Architecture)
 
 This is one of the demonstration projects for the documentation at abstractionlayeredarchitecture.com.
+
 The project implements a game scoring application for Tenpin Bowling using ALA, and then uses the domain abstractions to demonstrate 'maintainability' by implementing a Tennis scoring application.
 
 ## Getting Started

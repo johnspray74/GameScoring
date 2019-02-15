@@ -7,15 +7,10 @@ using System.Text;
 namespace GameScoring.DomainAbstractions
 {
     /// <summary>
-    /// Prerequisites to understanding
-    /// To understand the full background and reasoning behind this abstraction, you need to know about ALA which is explained here 'abstractionlayeredarchitecture.com'
-    /// Particular prerequisite knowledge is the Decorator pattern, which is the most common pattern in ALA (displacing the Observer (Publish/Subscribe) pattern.) 
-    /// A decorator implements and accepts the same interface, and just passes most methods straight through
-    /// so it can be inserted between any other two abstractions that are connected by that interface without affecting operation except by modifying the behaviour on that interface in one specific way.
-    /// 
-    /// TwoPlayer is a Decorator pattern of the IConsistsOf<TScore> interface
-    /// - it converts a pair of player scores from downstream into a single point to one player when the downstream object completes.
-    /// for example, in tennis it is used to convert two set scores like 7,6 into an increment of player 0's score  
+    /// Converts a pair of player scores from downstream into a single point to one player when the downstream object completes.
+    /// For example, in tennis it is used to convert a set score like 7,6 into a 1,0 to add one point to the players match score.
+    /// Decorator pattern of the IConsistsOf interface.
+    /// For more information see Abstraction Layered Architecture
     /// </summary>
     public class WinnerTakesPoint : IConsistsOf
     {
@@ -28,6 +23,19 @@ namespace GameScoring.DomainAbstractions
         // state of the game variables
         private readonly int frameNumber = 0;           // This is where our Frame is in the sequence of Frames (sometimes the lambda expressions may want to use this)
 
+        // <param name="name"></param>
+
+
+        // <summary>
+        // Test
+        // </summary>
+
+        /// <summary>
+        /// Converts a pair of player scores from downstream into a single point to one player when the downstream object completes.
+        /// For example, in tennis it is used to convert a set score like 7,6 into a 1,0 to add one point to the players match score.
+        /// Decorator pattern of the IConsistsOf interface.
+        /// </summary>
+        /// <param name="name">Used to identify the instance during debugging</param>
         public WinnerTakesPoint(string name)
         {
             objectName = name;

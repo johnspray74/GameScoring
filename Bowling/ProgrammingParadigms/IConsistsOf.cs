@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace GameScoring.ProgrammingParadigms
 {
+    /// <summary>
+    /// A programming Paradigm interface for game scoring. Allows wiring between things that "Consist of" other things. refer Abstraction Layered Architecture document. 
+    /// </summary>
     public interface IConsistsOf
     {
         void Ball(int player, int score);

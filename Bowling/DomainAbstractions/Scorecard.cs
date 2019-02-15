@@ -21,9 +21,9 @@ namespace GameScoring.DomainAbstractions
     ///            "| T0- |S00|S10|S20|\n" +
     ///            "| T1- |S01|S11|S21|\n" +
     ///            "--------------------------------------------\n")
-    ///            .WireTo(new ScoreBinding<int[]>("M", GetMatchScore))
-    ///            .WireTo(new ScoreBinding<List<int[]>>("S", GetSetScores))
-    ///            .WireTo(new ScoreBinding<string[]>("G", GetLastGameScore)
+    ///            .WireTo(new ScoreBinding&lt;int[]&gt;("M", GetMatchScore))
+    ///            .WireTo(new ScoreBinding&lt;List&lt;int[]&gt;&gt;("S", GetSetScores))
+    ///            .WireTo(new ScoreBinding&lt;string[]&gt;("G", GetLastGameScore)
     ///            );  
     /// </summary>
     class Scorecard
@@ -31,6 +31,24 @@ namespace GameScoring.DomainAbstractions
         private readonly string ASCIIDrawing;
 
 
+        /// <summary>
+        /// Pass into the constructor a ASCII template of the format for the scorecard
+        /// Use single letters as place holders for scores.
+        /// Follow the single letter with optional single digit indexes if the scores have one or two dimentions.
+        /// Follow with dashes to increase the size of the field that the score can be displayed in.
+        /// Wire objects that implement IScoreBinding to so that the Scorecard can use them to get the scores 
+        /// Call Score to get back a scorecard with the actual scores 
+        /// Example of usage:
+        ///        scorecard = new Scorecard(
+        ///            "-------------------\n" +
+        ///            "| T0- |S00|S10|S20|\n" +
+        ///            "| T1- |S01|S11|S21|\n" +
+        ///            "--------------------------------------------\n")
+        ///            .WireTo(new ScoreBinding&lt;int[]&gt;("M", GetMatchScore))
+        ///            .WireTo(new ScoreBinding&lt;List&lt;int[]&gt;&gt;("S", GetSetScores))
+        ///            .WireTo(new ScoreBinding&lt;string[]&gt;("G", GetLastGameScore)
+        ///            );  
+        /// </summary>
         public Scorecard(string value) { ASCIIDrawing = value; }
 
         List<IScoreBinding> scoreGetters = new List<IScoreBinding>();

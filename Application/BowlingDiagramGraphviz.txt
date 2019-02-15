@@ -1,0 +1,47 @@
+digraph foo {
+graph [rankdir=LR]
+subgraph cluster_C {
+label="10-Pin Bowling"
+style=rounded
+#node [style=rounded]
+node [shape=Mrecord]
+console [label="ConsoleGameRunner|\"Enter number of pins\""]
+framebind [label="Binding|F"]
+totalbind [label="Binding|T"]
+game [label="Frame|\"game\"|nFrames==10"]
+node [shape=record]
+bowling [label="Bowling"]
+function1 [label="GetAccumulatedScores"]
+function2 [label="GetFrameScores"]
+translate [label="Translate\nX,/,- etc"]
+console -> bowling
+bowling:ne -> game
+bowling -> scoreboard
+scoreboard -> framebind -> translate -> function2
+scoreboard -> totalbind -> function1
+function1 -> game
+function2 -> game
+{rank=same framebind totalbind}
+{rank=same function1 function2}
+label="10-Pin Bowling"
+style=rounded
+#node [style=rounded]
+node [shape=Mrecord]
+game [label="Frame|\"game\"|nFrames==2"]
+bonus [label="Bonus||score\<10 \|\| plays==3"]
+frame [label="Frame|\"frame\"|frameNum\<9 && (balls==2 \|\| pins==10)\n \|\|\ (balls==2 && pins\<10 \|\| balls==3)"]
+ball [label="SinglePlay"]
+node [shape=plaintext]
+scoreboard [fontsize=8,label=<
+<table border='0' cellborder='1' cellspacing='0'>
+<tr><td colspan="21" sides="B"><font point-size="14">Scorecard</font></td></tr>
+<tr><td colspan="2">1</td><td colspan="2">2</td><td colspan="2">3</td><td colspan="2">4</td><td colspan="2">5</td><td colspan="2">6</td><td colspan="2">7</td><td colspan="2">8</td><td colspan="2">9</td><td colspan="3">10</td></tr>
+<tr><td sides="LTR">F00</td><td>F01</td><td sides="LTR">F10</td><td>F11</td><td sides="LTR">F20</td><td>F21</td><td sides="LTR">F30</td><td>F31</td><td sides="LTR">F40</td><td>F41</td><td sides="LTR">F50</td><td>F51</td><td sides="LTR">F60</td><td>F61</td><td sides="LTR">F70</td><td>F71</td><td sides="LTR">F80</td><td>F81</td><td sides="LTR">F90</td><td>F91</td><td>F92</td></tr>
+<tr><td colspan="2" sides="LBR">T0</td><td colspan="2" sides="LBR">T1</td><td colspan="2" sides="LBR">T2</td><td colspan="2" sides="LBR">T3</td><td colspan="2" sides="LBR">T4</td><td colspan="2" sides="LBR">T5</td><td colspan="2" sides="LBR">T6</td><td colspan="2" sides="LBR">T7</td><td colspan="2" sides="LBR">T8</td><td colspan="3" sides="LBR">T9</td></tr>
+</table>
+>]
+game -> bonus -> frame -> ball
+}
+}
+
+

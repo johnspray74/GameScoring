@@ -7,7 +7,7 @@ The project implements a game scoring application for Tenpin Bowling using ALA, 
 
 ## Getting Started
 
-1. Read some of http://abstractionlayeredarchitecture.com until you get the insights behind Abstraction Layered Architecture. The web site is organised in passes that go into more depth. Each pass ends with an example project. The Bowling and Tennis applications are used as the examples at the end of passes 2 and 4. 
+1. Read some of http://abstractionlayeredarchitecture.com until you get the insights behind Abstraction Layered Architecture. The web site is organised in passes that go into more depth. Each pass ends with an example project. The Bowling and Tennis applications here are used as the examples at the end of passes 2 and 4. 
 
 2. Here are the ALA diagrams for these two applications:
 
@@ -26,7 +26,7 @@ These diagrams can be viewed by clicking on them in the Application folder.
 
 To understand these diagrams better, refer to their step-by-step development process in the examples at the end of passes 2 and 4 at http://abstractionlayeredarchitecture.com.
 
-4. The diagrams are manually translated into code in Tennis.c and Bowling.c (in the Application folder). Inspect the code to see how they directly reflect the ALA diagrams. 
+4. The diagrams are manually translated into code in Tennis.cs and Bowling.cs (in the Application folder). Inspect the code to see how they directly reflect the ALA diagrams. 
 
 Optional:
 

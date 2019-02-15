@@ -82,7 +82,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Wiring\Wiring.csproj">
+    <ProjectReference Include="Wiring\Wiring.csproj">
       <Project>{35752f4c-da45-4d71-8b27-e34cd0fbdce8}</Project>
       <Name>Wiring</Name>
     </ProjectReference>

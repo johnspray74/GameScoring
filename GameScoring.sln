@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{D3CC29F1-19CA-441C-A28F-E94E70772AFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameScoring", "Bowling\GameScoring.csproj", "{D03F8AC5-2AB4-4DA1-9386-011C7F575221}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameScoring", "GameScoring.csproj", "{D03F8AC5-2AB4-4DA1-9386-011C7F575221}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wiring", "Wiring\Wiring.csproj", "{35752F4C-DA45-4D71-8B27-E34CD0FBDCE8}"
 EndProject

@@ -71,7 +71,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Bowling\GameScoring.csproj">
+    <ProjectReference Include="..\GameScoring.csproj">
       <Project>{d03f8ac5-2ab4-4da1-9386-011c7f575221}</Project>
       <Name>GameScoring</Name>
     </ProjectReference>

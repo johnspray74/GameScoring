@@ -21,7 +21,7 @@ These diagrams can be viewed by clicking on them in the Application folder.
 
 * All the requirements of their respective applications
 * The source code for their respective applications
-* The ALA architectural designs including domain abstractions and programming paradigms for their respective applciations.
+* The ALA architectural designs including domain abstractions and programming paradigms for their respective applications.
 * A set of domain abstractions and programming paradigms useful for implementing other application in the same domain.
 
 To understand these diagrams better, refer to their step-by-step development process in the examples at the end of passes 2 and 4 at http://abstractionlayeredarchitecture.com.

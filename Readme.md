@@ -15,29 +15,29 @@ The project implements a game scoring application for Tenpin Bowling using ALA, 
 
 ![Tennis](/Application/TennisDiagram.png)
 
-3. When you understand ALA, you will understand that these diagrams represent:
+These diagrams can be viewed by clicking on them in the Application folder.
+
+3. When you understand ALA, you will understand that these diagrams by themselves represent:
 
 * All the requirements of their respective applications
 * The source code for their respective applications
-* The architectural designs including domain abstractions and programming paradigms.
+* The ALA architectural designs including domain abstractions and programming paradigms for their respective applciations.
 
-To understand these diagrams better, refer to their development mental process in the examples at the end of passes 2 and 4 at http://abstractionlayeredarchitecture.com.
+To understand these diagrams better, refer to their step-by-step development process in the examples at the end of passes 2 and 4 at http://abstractionlayeredarchitecture.com.
 
-The diagrams are manually translated into code in Tennis.c and Bowling.c (in the Application folder).
-
-Inspect the code to see how they directly reflect the ALA diagrams. 
+4. The diagrams are manually translated into code in Tennis.c and Bowling.c (in the Application folder). Inspect the code to see how they directly reflect the ALA diagrams. 
 
 Optional:
 
-4. Read the code inside the domain abstractions (in the DomainAbstractions folder) to see how they work internally.
+5. Read the code inside the domain abstractions (in the DomainAbstractions folder) to see how they work internally.
 
-5. Install Visual Studio for C# community edition.
+6. Install Visual Studio for C# community edition.
 
-6. Clone this git repsoitory.
+7. Clone this git repsoitory, and double click on the solution file.
 
-7. To see that those diagrams above actually execute, run the console application by pressing F5. Change to the other application by modifying the comment in Start.cs.
+8. To see that those diagrams above actually execute, run the console application by pressing F5 in Visual Studio. Change to the other application by modifying the comment in Start.cs.
 
-8. Run the tests in the Test Explorer.
+9. Run the tests in the Test Explorer.
 
 ## Authors
 

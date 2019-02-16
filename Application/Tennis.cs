@@ -29,6 +29,8 @@ namespace GameScoring.Application
     /// </summary>
     public class Tennis : IGame
     {
+        // This code is generated manually from the diagram: see TennisDiagram.png 
+
         private IConsistsOf match;
         private Scorecard scorecard;
         private ConsoleGameRunner consolerunner;
@@ -36,14 +38,13 @@ namespace GameScoring.Application
 
         public Tennis()
         {
-            // This section of code is generated manually from the diagram
             // Go change the diagram first where you can reason about the logic, then come here and make it match the diagram
             // Note following code uses the fluent pattern - every method returns the this reference of the object it is called on.
             match = new Frame("match")      // (note the string is just used to identify instances during debugging, but also helps reading this code to know what they are for)
                 .setIsFrameCompleteLambda((matchNumber, nSets, score) => score.Max() == 3)  // best of 5 sets is first to win 3 sets
                 .WireTo(new WinnerTakesPoint("winnerOfSet")            // Reduce set score to one point for winner e.g. 6,4 to 1,0
                     .WireTo(new Switch("switch")
-                        .setSwitchLambda((setNumber, nGames, score) => (setNumber< 4 && score[0] == 6 && score[1] == 6))   // switch to tiebreak when set score is 6,6, except last set
+                        .setSwitchLambda((setNumber, nGames, score) => (setNumber < 4 && score[0] == 6 && score[1] == 6))   // switch to tiebreak when set score is 6,6, except last set
                         .WireTo(new Frame("set")
                             .setIsFrameCompleteLambda((setNumber, nGames, score) => score.Max() >= 6 && Math.Abs(score[0] - score[1]) >= 2)  // A set completes when one player wins 6 games with a margin of 2
                             .WireTo(new WinnerTakesPoint("winnerOfGame")            // Convert game score to one point for winner
@@ -76,9 +77,13 @@ namespace GameScoring.Application
             consolerunner = new ConsoleGameRunner("Enter winner 0 or 1")
                 .WireTo(this);
 
+
+
         }
 
-
+        /// <summary>
+        /// Starts the Tennis game running
+        /// </summary>
         public void Run()
         {
             consolerunner.Run();
@@ -87,23 +92,33 @@ namespace GameScoring.Application
 
 
 
-// Following three functions are the interface used by whatever is running the game, such as a console runner
-// Also used by tests
+        // Following three functions are the interface used by whatever is running the game, such as a console runner
+        // Also used by tests
 
+
+        /// <summary>
+        /// Call this after every Tennis point. Pass in the winner as 0 or 1
+        /// </summary>
+        /// <param name="result"></param>
         public void Play(int result)
         {
-            // Play is a Ball
-            // result is the winner, player 0 or 1.
             match.Ball(result, 1);
         }
 
+        /// <summary>
+        /// Returns true when the entrie Tennis match is complete
+        /// </summary>
+        /// <returns></returns>
         public bool IsComplete()
         {
             return match.IsComplete();
         }
 
 
-
+        /// <summary>
+        /// Returns an ASCII string version of the current scoreboard.
+        /// </summary>
+        /// <returns></returns>
         public string GetScore()
         {
             // uses two domain abstractions to express the requirements of scoring
@@ -141,44 +156,82 @@ namespace GameScoring.Application
 
 
 
-        // This gets the current game score e.g. "30,love", or "adv,40"
-        // If it's in a tie break, returns like "5,4"
-        // note: to understand following code, see wiring diagram of the application - you are using the GetSubFrames method to reach into the correct depth level of the score tree to the current game instance via the match, the first WinnerGetsOnePoint, the switch, the set, and the 2nd WinnerGetsOnePoint objects
+        /// <summary>
+        /// Gets the current game score e.g. "30","love", "deuce","" or "adv","". If it's in a tie break, returns like "5","4"
+        /// </summary>
         public string[] GetLastGameScore()
         {
+            // note: to understand following code, see wiring diagram of the application - you are using the GetSubFrames method to reach into the correct depth level of the score tree to the last game instance via the match, the first WinnerGetsOnePoint, the switch, the set, and the 2nd WinnerGetsOnePoint objects
+            if (match.GetSubFrames().Count == 0) return new string[] { "", "" };  // no play yet
+            return IfFunction<string[]>(
+                () => match.GetSubFrames().Last()     // WinnerGetsPoint of last set
+                    .GetSubFrames().First()           // switch
+                    .GetSubFrames().First()           // either set or WinnerGetsPoint of tiebreak
+                    .GetType() == typeof(Frame),      // If type is Frame, it's a set, otherwise it's a WinnertakesPoint of a tiebreak
+                () => TranslateGameScore(
+                    match.GetSubFrames().Last()       // WinnerGetsPoint of last set
+                    .GetSubFrames().First()           // switch
+                    .GetSubFrames().First()           // last set
+                    .GetSubFrames().Last()            // WinnerGetsPoint of last game
+                    .GetSubFrames().First()           // last game
+                    .GetScore()),
+                () => match.GetSubFrames().Last()     // WinnerGetsPoint of last set
+                    .GetSubFrames().First()           // switch
+                    .GetSubFrames().First()           // WinnerGetsPoint of tiebreak
+                    .GetSubFrames().First()           // tiebreak
+                    .GetScore()
+                    .Select(n => n.ToString()).ToArray() // convert from int array to string array
+                );
+        }
+
+        
+        /// <summary>
+        /// By example, does the follwing tranlations
+        /// 0,0 => "" (no play yet)
+        /// 1,0 => "15","love"
+        /// 2,0 => "30","love"
+        /// 3,0 => "40","love"
+        /// 4,0 => "game",""
+        /// 2,4 => "30,"game"
+        /// 3,3 => "deuce",""
+        /// 4,3 => "adv",""
+        /// 3,4 => "","adv"
+        /// 4,0 => "game",""
+        /// 4,4 => "deuce",""
+        /// 5,5 -> "deuce",""
+        /// 5,6 => "","adv"
+        /// This gets the current game score e.g. "30,love", or "adv,40"
+        /// </summary>
+        /// <param name=""></param>
+        /// <returns></returns>
+        private string[] TranslateGameScore(int[] gamescore)
+        {
             var rv = new string[] { "", "" };
-            if (match.GetSubFrames().Count == 0) return rv;  // no play yet
-            IConsistsOf temp = match
-            .GetSubFrames().Last()     // WinnerGetsPoint of last set
-            .GetSubFrames().First()    // switch
-            .GetSubFrames().First();   // either set or WinnerGetsPoint of tiebreak
-            if (temp.GetType() == typeof(Frame))  // we are in a normal game, not a tiebreak
+            if (gamescore[0] >= 4 && gamescore[0] >= gamescore[1] + 2) { rv[0] = "game"; return rv; }
+            if (gamescore[1] >= 4 && gamescore[1] >= gamescore[0] + 2) { rv[1] = "game"; return rv; }
+            if (gamescore[0] >= 3 && gamescore[1] >= 3)
             {
-                int[] gamescore = temp
-                    .GetSubFrames().Last()     // WinnerGetsPoint of last game
-                    .GetSubFrames().First()    // current game object
-                    .GetScore();
-                if (gamescore[0] >= 4 && gamescore[0] >= gamescore[1] + 2) { rv[0] = "game"; return rv; }
-                if (gamescore[1] >= 4 && gamescore[1] >= gamescore[0] + 2) { rv[1] = "game"; return rv; }
-                if (gamescore[0] >= 3 && gamescore[1] >= 3)
-                {
-                    if (gamescore[0] > gamescore[1]) { rv[0] = "adv"; return rv; };
-                    if (gamescore[0] < gamescore[1]) { rv[1] = "adv"; return rv; };
-                    rv[0] = "deuce"; return rv;
-                }
-                var map = new Dictionary<int, string> { { 0, "love" }, { 1, "15" }, { 2, "30" }, { 3, "40" }, { 4, "game" } };
-                return new string[] { map[gamescore[0]], map[gamescore[1]] };
+                if (gamescore[0] > gamescore[1]) { rv[0] = "adv"; return rv; };
+                if (gamescore[0] < gamescore[1]) { rv[1] = "adv"; return rv; };
+                rv[0] = "deuce"; return rv;
             }
-            else  // in a tie break
-            {
-                int[] tiebreakscore = temp
-                    .GetSubFrames().First()    // current tiebreak object
-                    .GetScore();
-                return new string[] { tiebreakscore[0].ToString(), tiebreakscore[1].ToString() };
-            }
+            var map = new Dictionary<int, string> { { 0, "love" }, { 1, "15" }, { 2, "30" }, { 3, "40" }, { 4, "game" } };
+            return new string[] { map[gamescore[0]], map[gamescore[1]] };
         }
 
 
+
+        private T IfFunction<T>(Func<bool> condition, Func<T> source1, Func<T> source2)
+        {
+            if (condition())
+            {
+                return source1();
+            }
+            else
+            {
+                return source2();
+            }
+        }
 
 
         public int NSets()

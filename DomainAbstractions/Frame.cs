@@ -7,21 +7,24 @@ using System.Text;
 namespace GameScoring.DomainAbstractions
 {
     /// <summary>
+    /// ALA Domain abstraction for game scoring applications. Makes new subgames until the lambda function is true. See GameScoring.DomainAbstractions.Frame for more explanation.
+    /// </summary>
+    /// <remarks>
     /// Knowledge prequisites:
     /// To understand the full background and reasoning behind this abstraction, you need to know about ALA which is explained here 'abstractionlayeredarchitecture.com'
-    /// <para/>
+    /// 
     /// Frame is a domain abstraction for scoring games that are structured with 'frames'
     /// For example, in Tennis you would use one instance for the match, one for the set, and one for the game.
     /// For example, in 10-pin bowling you would use one for the game, and one for the frame.
     /// Frame basically implements a composite design pattern. It has a list of itself or any other objects that implement the IConsistsOf interface.
-    /// <para/>
+    /// 
     /// To use this abstraction to build a game you instantiate one of each type of Frame and wire them together.
     /// As the game progresses, it will create instances in a composite pattern (tree) by making copies of these prototypes (prototype pattern).
     /// The meaning of the wiring (Programming paradigm) is 'Consists of'
     /// For example, in tennis, A Match 'consists of' Sets which 'consists of' Games.
     /// in Bowling, a games consists of frames, which consists of throws.
     /// The programming paradigm interface name is therefore "IConsistsOf"
-    /// <para/>
+    /// 
     /// The abstraction instances are configured with a lambda expression that tells it when the Frame completes.
     /// It is a function of the state of the frame, e.g. frameNumber/plays/score, 
     /// (where for example, in a Bowling frame, frameNumber is 1st, 2nd 3rd child frame of the game)
@@ -29,7 +32,7 @@ namespace GameScoring.DomainAbstractions
     /// For a tennis set the lambda is (setNumber, nGames, score) => score.Max() >= 6 &amp;&amp; Math.Abs(score[0] - score[1]) >= 2
     /// If no completion lambda expression is provided, the frame completes when its first subframe completes
     /// The Frame always passes the Ball score to all it's children, whether they are complete or not, in case they want to do something with it after they are complete.
-    /// </summary>
+    /// </remarks>
     public class Frame : IConsistsOf
     {
         // configurations for the abstraction
@@ -48,31 +51,9 @@ namespace GameScoring.DomainAbstractions
         private List<IConsistsOf> subFrames = new List<IConsistsOf>();
 
 
+        // Note we put the same summary as the class type on constructors becasue in ALA wiring code, Intellisence is mostly using constructor names.
         /// <summary>
-        /// Knowledge prequisites:
-        /// <para/>
-        /// To understand the full background and reasoning behind this abstraction, you need to know about ALA which is explained here 'abstractionlayeredarchitecture.com'
-        /// <para/>
-        /// Frame is a domain abstraction for scoring games that are structured with 'frames'
-        /// For example, in Tennis you would use one instance for the match, one for the set, and one for the game.
-        /// For example, in 10-pin bowling you would use one for the game, and one for the frame.
-        /// Frame basically implements a composite design pattern. It has a list of itself or any other objects that implement the IConsistsOf interface.
-        /// <para/>
-        /// To use this abstraction to build a game you instantiate one of each type of Frame and wire them together.
-        /// As the game progresses, it will create instances in a composite pattern (tree) by making copies of these prototypes (prototype pattern).
-        /// The meaning of the wiring (Programming paradigm) is 'Consists of'
-        /// For example, in tennis, A Match 'consists of' Sets which 'consists of' Games.
-        /// in Bowling, a games consists of frames, which consists of throws.
-        /// The programming paradigm interface name is therefore "IConsistsOf"
-        /// <para/>
-        /// The abstraction instances are configured with a lambda expression that tells it when the Frame completes.
-        /// It is a function of the state of the frame, e.g. frameNumber/plays/score, 
-        /// (where for example, in a Bowling frame, frameNumber is 1st, 2nd 3rd child frame of the game)
-        /// For example, the lambda expression for the completion of a 10-pin bowls game is (plays==10),
-        /// For a tennis set the lambda is (setNumber, nGames, score) => score.Max() >= 6 &amp;&amp; Math.Abs(score[0] - score[1]) >= 2
-        /// If no completion lambda expression is provided, the frame completes when its first subframe completes
-        /// The Frame always passes the Ball score to all it's children, whether they are complete or not, in case they want to do something with it after they are complete.
-        /// See <see cref="GameScoring.DomainAbstractions.Frame"/> for more information.
+        /// ALA Domain abstraction for game scoring applications. Makes new subgames until the lambda function is true. See GameScoring.DomainAbstractions.Frame for more explanation.
         /// </summary>
         public Frame(string name)  
         {
@@ -88,8 +69,15 @@ namespace GameScoring.DomainAbstractions
 
 
 
-        // Configuration setters fluent setters are used
+        // Configuration setters. 
+        // Fluent setters return this so that you can string them together.
 
+
+        /// <summary>
+        /// Set a lambda function that must return true when the frame is to complete. Function gets three parameters: frameNumber, nPlays, score
+        /// </summary>
+        /// <param name="lambda">A lambda function</param>
+        /// <returns>this for fluent programming style</returns>
         public Frame setIsFrameCompleteLambda(Func<int, int, int[], bool> lambda)
         {
             isFrameComplete = lambda;
@@ -110,24 +98,26 @@ namespace GameScoring.DomainAbstractions
 
 
 
-        // This is where all the logic for the abstraction is 
-        // We have three things to do
-        // 1. Check if we are complete, and do nothing
-        // 2. See if the last subframe is complete, if so, start a new subframe
-        // 3. Pass the ball score to all subframes
-
+        /// <summary>
+        /// Progresses the state of the game each time a player scores.
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="score"></param>
         public void Ball(int player, int score)
         {
-            // 1. if our frame is complete, do nothing
+            // This is where all the logic for the 'Frame' domain abstraction is 
+            // We have three things to do
+            // 1. Check if we are complete, and do nothing
+            // 2. See if the last subframe is complete, if so, start a new subframe
+            // 3. Pass the ball score to all subframes
+
             if (IsComplete()) return;
 
-            // 2. see if it's time to start a new subframe by seeing if the last subframe is complete
             if (subFrames.Count==0 || subFrames.Last().IsComplete())
             {
                 subFrames.Add(downstream.GetCopy(subFrames.Count));  // prototype pattern. Note: subFrames.Count gives us a frame number
             }
 
-            // 3. Pass the ball onto subframes
             foreach (IConsistsOf s in subFrames)
             {
                 s.Ball(player, score);
@@ -135,8 +125,10 @@ namespace GameScoring.DomainAbstractions
         }
 
 
+        // Following five methods implement the IConsistsOf interface
+
         // Our frame is complete when the last subframe is complete AND the lambda function says we are complete
-        private bool IsComplete()
+        public bool IsComplete()
         {
             if (subFrames.Count == 0) return false; // no plays yet
             return (subFrames.Last().IsComplete()) &&  // last subframe is complete
@@ -144,22 +136,19 @@ namespace GameScoring.DomainAbstractions
         }
 
 
-        bool IConsistsOf.IsComplete() { return IsComplete(); }
 
-        private int GetnPlays()
+        public int GetnPlays()
         {
             return subFrames.Count();
         }
 
-        int IConsistsOf.GetnPlays() { return GetnPlays(); }
 
 
-        private int[] GetScore()
+        public int[] GetScore()
         {
             return subFrames.Select(sf => sf.GetScore()).Sum();
         }
 
-        int[] IConsistsOf.GetScore() { return GetScore(); }
 
 
         // This method allows the client to access individual scores for sub-frames
@@ -183,7 +172,7 @@ namespace GameScoring.DomainAbstractions
 
 
 
-        // for debugging -- allows us to print out a map of the whole tree
+        // for debugging only -- allows us to print out a map of the whole tree
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();

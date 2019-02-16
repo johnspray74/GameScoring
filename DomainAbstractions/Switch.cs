@@ -7,18 +7,22 @@ using System.Text;
 namespace GameScoring.DomainAbstractions
 {
     /// <summary>
+    /// ALA Domain abstraction for game scoring applications. Has two subgames. Switches from the first subgame to the second when the lambda function goes true. See GameScoring.DomainAbstractions.Frame for more explanation.
+    /// </summary>
+    /// <remarks>
     /// Prerequisites to understanding
     /// To understand the full background and reasoning behind this abstraction, you need to know about ALA which is explained here 'abstractionlayeredarchitecture.com'
     /// Additional prerequisite knowledge is the Decorator pattern, which along with composite is the most common pattern in ALA (displacing the Observer (Publish/Subscribe) pattern.) 
     /// A decorator implements and accepts the same interface, and usually passes most methods straight through
     /// so it can be inserted between any other two abstractions that are connected by that interface without affecting operation
     /// except by modifying the behaviour on that interface in one specific way.
-    /// 
-    /// NeutralDecorator is not a useful abstraction in itself - it is an inert decorator of the IConsistsOf<TScore> interface
-    /// - that is it can be inserted between any two objects wired using the IConsists interface and it doesn't change the behaviour.
-    /// - all methods are effectively passed through
-    /// It is used as a copy/paste starting point for making new abstractions e.g. Bonuses and WinnerGetsOnePoint
-    /// </summary>
+    /// In this case, there are two subgames.
+    /// When the lambda function returns true, we switch from the first subgame to the second. Further Balls are passed to the second subframe.
+    /// The returned score is the summ from the two subgames.
+    /// </remarks>
+    /// <example>
+    /// An example of the use of this abstraction is for the tiebreak in Tennis.
+    /// </example>
     public class Switch : IConsistsOf
     {
         private string objectName;                      // Just used to identify objects druing debugging. Becasue ALA makes many instances from abstractions, it is useful for them to be identifiable during debug  (e.g. can be used to compare before Console.Writeline)
@@ -34,6 +38,9 @@ namespace GameScoring.DomainAbstractions
 
 
 
+        /// <summary>
+        /// ALA Domain abstraction for game scoring applications. Has two subgames. Switches from the first subgame to the second when the lambda function goes true. See GameScoring.DomainAbstractions.Frame for more explanation.
+        /// </summary>
         public Switch(string name)
         {
             objectName = name;
@@ -49,7 +56,11 @@ namespace GameScoring.DomainAbstractions
 
 
 
-        // fluent setters are used for the Lambda functions that configure this class and for wiring to other instances
+        /// <summary>
+        /// Set a lambda function that must return true when we need to switch to the second subgame. Function gets three parameters: frameNumber, nPlays, score
+        /// </summary>
+        /// <param name="lambda">A lambda function</param>
+        /// <returns>this for fluent programming style</returns>
         public Switch setSwitchLambda(Func<int, int, int[], bool> lambda)
         {
             isSwitchCompleteLambda = lambda;
@@ -88,7 +99,7 @@ namespace GameScoring.DomainAbstractions
         }
 
 
-        private bool IsComplete()
+        public bool IsComplete()
         {
             if (IsSwitched())
             {
@@ -101,7 +112,6 @@ namespace GameScoring.DomainAbstractions
         }
 
 
-        bool IConsistsOf.IsComplete() { return IsComplete(); }
 
         private bool IsSwitched()
         {
@@ -109,7 +119,7 @@ namespace GameScoring.DomainAbstractions
         }
 
 
-        private int GetnPlays()
+        public int GetnPlays()
         {
             if (IsSwitched())
             {
@@ -121,9 +131,8 @@ namespace GameScoring.DomainAbstractions
             }
         }
 
-        int IConsistsOf.GetnPlays() { return GetnPlays(); }
 
-        private int[] GetScore()
+        public int[] GetScore()
         {
             if (IsSwitched())
             {
@@ -135,10 +144,6 @@ namespace GameScoring.DomainAbstractions
             }
         }
 
-        int[] IConsistsOf.GetScore()
-        {
-            return GetScore();
-        }
 
 
         List<IConsistsOf> IConsistsOf.GetSubFrames()

@@ -7,20 +7,25 @@ using System.Text;
 namespace GameScoring.DomainAbstractions
 {
     /// <summary>
+    /// ALA Domain Abstraction. When its subgame completes, it continues to add ball scores until its lambda goes true.
+    /// </summary>
+    /// <remarks>
     /// Prerequisites to understanding
     /// To understand the full background and reasoning behind this abstraction, you need to know about ALA which is explained here 'abstractionlayeredarchitecture.com'
     /// Particular prerequisite knowledge is the Decorator pattern, which is the most common pattern in ALA (displacing the Observer (Publish/Subscribe) pattern.) 
     /// A decorator implements and accepts the same interface, and just passes most methods straight through
     /// so it can be inserted between any other two abstractions that are connected by that interface without affecting operation except by modifying the behaviour on that interface in one specific way.
     /// 
-    /// Bonuses is a domain abstraction and a Decorator that implements and accepts the IConsistsOf<TScore> interface. It always has one child.
+    /// Bonuses is a domain abstraction and a Decorator that implements and accepts the IConsistsOf interface. It always has one child.
     /// The modification is to add bonues to the score.
     /// It does this only after the IsComplete method of the downstream child has returned true.
     /// The IsComplete method result returned from downstream is passed upstream normally, but it is assumed that ball scores are still received. 
     /// These are added to the local score until the local IsComplete lambda function returns true.
-    /// For example, in 10-pin bowling you would use this with a lambda of "score<10 || plays==3" so that after the downstream Frame completes, it will keep adding ball scores if the score is already 10, until the total throws is 3.
-    /// The lambda is a function of the state of the frame, e.g. plays/score.
-    /// </summary>
+    /// <example>
+    /// For example, in 10-pin bowling you would use this with a lambda of "score&lt;10 || plays==3" so that after the downstream Frame completes, it will keep adding ball scores if the score is already 10, until the total throws is 3.
+    /// </example>
+    /// The lambda is a function of the state of the frame, e.g. plays,score.
+    /// </remarks>
     public class Bonuses : IConsistsOf
     {
         private string objectName;  // used to identify objects during debugging (e.g. can be used to compare before Console.Writeline) Becasue of ALA use of abstractions, instances must be identifiable during debug
@@ -49,9 +54,13 @@ namespace GameScoring.DomainAbstractions
         {
             this.frameNumber = frameNumber;
         }
-        
-        
-        // fluent setters are used for the Lambda functions that configure this class and for wiring to other instances
+
+
+        /// <summary>
+        /// Set a lambda function that must return true when we stop adding bonuses. Function gets three parameters: frameNumber, nPlays, score
+        /// </summary>
+        /// <param name="lambda">A lambda function</param>
+        /// <returns>this for fluent programming style</returns>
         public Bonuses setIsBonusesCompleteLambda(Func<int, int, bool> lambda)
         {
             isBonusesComplete = lambda;
@@ -105,11 +114,11 @@ namespace GameScoring.DomainAbstractions
             return IsComplete() && (isBonusesComplete==null || isBonusesComplete(GetnPlays()+bonusBalls, downStreamFrame.GetScore()[0]));
         }
 
-        private bool IsComplete() { return downStreamFrame.IsComplete(); }
+        public bool IsComplete() { return downStreamFrame.IsComplete(); }
 
-        bool IConsistsOf.IsComplete() { return IsComplete(); }
  
         public int GetnPlays() { return downStreamFrame.GetnPlays();  }
+
 
         int[] IConsistsOf.GetScore()
         {

@@ -9,7 +9,7 @@ namespace Wiring
     public static class Wiring
     {
         /// <summary>
-        /// if object A (this) has a private field of an interface, and object B implements the interface, then wire them together
+        /// if object A (this) has a private field of an interface, and object B implements the interface, then wire them together. Returns this for fluent style programming.
         /// </summary>
         /// <param name="A">
         /// The object on which the method is called is the the wireFrom object

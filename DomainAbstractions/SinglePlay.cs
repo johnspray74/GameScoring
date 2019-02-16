@@ -7,13 +7,16 @@ using System.Text;
 namespace GameScoring.DomainAbstractions
 {
     /// <summary>
+    /// ALA Domain Abstraction. Leaf subgame that stores the score of a single play.
+    /// </summary>
+    /// <remarks>
     /// To understand the full background and reasoning behind this abstraction, you need to know about ALA which is explained here 'abstractionlayeredarchitecture.com'
     /// 
     /// SinglePlay is a domain abstraction for the leaf nodes that records the score of a single play.
     /// It cannot have any children like the GrameFrame or Bonus abstractions can.
     /// In terms of functional programming, it doesn't pass function calls onto children, it returns local state.
     /// It always completes after one play. It does not take a completion lambda like some of the other domain abstractions.
-    /// </summary>
+    /// </remarks>
     public class SinglePlay : IConsistsOf
     {
 
@@ -35,6 +38,9 @@ namespace GameScoring.DomainAbstractions
         private bool complete = false;                  // Goes true when we get one play score.
 
 
+        /// <summary>
+        /// ALA Domain Abstraction. Leaf subgame that stores the score of a single play.
+        /// </summary>
         public SinglePlay(string name)
         {
             // used for debugging only - not part of the primary functionality
@@ -53,10 +59,10 @@ namespace GameScoring.DomainAbstractions
         private StringBuilder debug = new StringBuilder();
 
 
-        // This is where all the logic for the abstraction is 
-        // 1. Update the score and game state becomes complete
+
         public void Ball(int player, int score)
         {
+            // 1. Update the score and game state becomes complete
             if (complete) return;
             localScore[player] += score;
             complete = true;

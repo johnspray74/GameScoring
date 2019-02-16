@@ -8,7 +8,11 @@ namespace GameScoring.ProgrammingParadigms
 {
     static class ExtensionMethods
     {
-        // Accumulate return an equivalent sequence with the values accumlating
+        /// <summary>
+        /// Returns an equivalent sequence with the integer values accumlating
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static IEnumerable<int> Accumulate(this IEnumerable<int> input)
         {
             int sum = 0;
@@ -19,7 +23,11 @@ namespace GameScoring.ProgrammingParadigms
             }
         }
 
-
+        /// <summary>
+        /// Returns an integer array where elements are the sum of corresponding elements in an IEnumerable of integer arrays
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static int[] Sum(this IEnumerable<int[]> input)
         {
             int[] sum = new int[2];
@@ -33,18 +41,20 @@ namespace GameScoring.ProgrammingParadigms
             return sum;
         }
 
-
-        
-                public static int[] AddIntArray(this int[] value1, int[] value2)
-                {
-                    int[] result = new int[value1.Length];
-                    for (int i = 0; i < value1.Length && i < value2.Length; i++)
-                    {
-                        result[i]  = value1[i] + value2[i];
-                    }
-                    return result;
-                }
-        
-
+        /// <summary>
+        /// Adds two int arrays. Corresponding elements are added. 
+        /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
+        /// <returns></returns>
+        public static int[] AddIntArray(this int[] value1, int[] value2)
+        {
+            int[] result = new int[value1.Length];
+            for (int i = 0; i < value1.Length && i < value2.Length; i++)
+            {
+                result[i]  = value1[i] + value2[i];
+            }
+            return result;
+        }
     }
 }

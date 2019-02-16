@@ -119,7 +119,6 @@ namespace GameScoring.Application
         /// 10,7,3 -> "X","7","/"
         /// 0,10,10 -> "-","/","X"
         /// 10,10,10 -> "X","X","X"
-        /// This function is an abstraction  (does not refer to local variables or have side effects)
         /// </summary>
         /// <param name="frames">
         /// The parameter, frames, is a list of frames, each with a list of integers between 0 and 10 for the numbers of pins.
@@ -127,10 +126,13 @@ namespace GameScoring.Application
         /// <returns>
         /// return value will be exactly the same structure as the parameter but with strings instead of ints
         /// </returns>
+        /// <remarks>
+        /// This function is an abstraction  (does not refer to local variables or have side effects)
+        /// </remarks>
         private List<List<string>> TranslateFrameScores(List<List<int>> frames)
         { 
             // This function looks a bit daunting but actually it just methodically makes the above example tranlations of the frame pin scores needed for a real bowling scorecard 
-            // (is there an abstractiuon to be found in this, so that it can be expressed as a set of rules similar to those above examples, and handle tennis game type number to string translations as well?)
+            // (is there an abstractiuon to be found in this, so that it can be expressed as a set of rules similar to those above examples, and handle tennis game scoring translations as well?)
             List<List<string>> rv = new List<List<string>>(); 
             int frameNumber = 0;
             foreach (List<int> frame in frames)

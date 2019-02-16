@@ -7,11 +7,14 @@ using System.Text;
 namespace GameScoring.DomainAbstractions
 {
     /// <summary>
-    /// Converts a pair of player scores from downstream into a single point to one player when the downstream object completes.
+    /// ALA Domain Abstraction. Returns 0,0 until the subgame completes, then converts the subgame score like 6,4 to like 1,0 to the winner.
+    /// </summary>
+    /// <remarks>
+    /// Decorator pattern of the IConsistsOf interface.
+    /// Converts an array of two player scores from downstream into a single point to one player when the downstream object completes.
     /// For example, in tennis it is used to convert a set score like 7,6 into a 1,0 to add one point to the players match score.
     /// Decorator pattern of the IConsistsOf interface.
-    /// For more information see Abstraction Layered Architecture
-    /// </summary>
+    /// </remarks>
     public class WinnerTakesPoint : IConsistsOf
     {
         private string objectName;  // used to identify objects druing debugging (e.g. can be used to compare before Console.Writeline) Becasue of ALA use of abstractions, instances must be identifiable during debug
@@ -23,16 +26,9 @@ namespace GameScoring.DomainAbstractions
         // state of the game variables
         private readonly int frameNumber = 0;           // This is where our Frame is in the sequence of Frames (sometimes the lambda expressions may want to use this)
 
-        // <param name="name"></param>
-
-
-        // <summary>
-        // Test
-        // </summary>
 
         /// <summary>
-        /// Converts a pair of player scores from downstream into a single point to one player when the downstream object completes.
-        /// For example, in tennis it is used to convert a set score like 7,6 into a 1,0 to add one point to the players match score.
+        /// ALA Domain Abstraction. Returns 0,0 until the subgame completes, then converts the subgame score like 6,4 to like 1,0 to the winner.
         /// Decorator pattern of the IConsistsOf interface.
         /// </summary>
         /// <param name="name">Used to identify the instance during debugging</param>
@@ -62,14 +58,12 @@ namespace GameScoring.DomainAbstractions
         }
         */
 
-        // This is where all the logic for the abstraction is 
-        // We have three things to do
-        // 1. Pass through the Ball function to our downstream frame
-        // 2. update local scoring state 
-        // 3. Find out if the downstrean frame has completed
 
         public void Ball(int player, int score)
         {
+            // This is where all the logic for the abstraction is 
+            // 1. Nothing if the downstrean frame has already completed
+            // 2. Pass the ball to the downstream frame 
             if (IsComplete()) return;
             if (downStreamFrame != null) downStreamFrame.Ball(player, score);
         }
@@ -77,13 +71,12 @@ namespace GameScoring.DomainAbstractions
 
 
 
-        private bool IsComplete() { return downStreamFrame.IsComplete(); }
+        public bool IsComplete() { return downStreamFrame.IsComplete(); }
 
-        bool IConsistsOf.IsComplete() { return IsComplete(); }
 
-        int IConsistsOf.GetnPlays() { return downStreamFrame.GetnPlays(); }
+        public int GetnPlays() { return downStreamFrame.GetnPlays(); }
 
-        private int[] GetScore()
+        public int[] GetScore()
         {
             // scoring algorthm is 1 point if subframe won
             // determine which player had the higher score and give that player one point in our local score state
@@ -96,8 +89,6 @@ namespace GameScoring.DomainAbstractions
             }
             return localScore;
         }
-
-        int[] IConsistsOf.GetScore() { return GetScore(); }
 
         List<IConsistsOf> IConsistsOf.GetSubFrames()
         {

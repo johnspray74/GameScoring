@@ -68,10 +68,9 @@ namespace GameScoring.Application
                 "| M0  |S00|S10|S20|S30|S40|S50|S60|  G0--- |\n" +
                 "| M1  |S01|S11|S21|S31|S41|S51|S61|  G1--- |\n" +
                 "--------------------------------------------\n")
-                .WireTo(new ScoreBinding<int[]>("M", GetMatchScore))
-                .WireTo(new ScoreBinding<List<int[]>>("S", GetSetScores))
-                .WireTo(new ScoreBinding<string[]>("G", GetLastGameScore)
-                );
+                .WireTo(new ScoreBinding<int[]>("M", () => match.GetScore()))
+                .WireTo(new ScoreBinding<List<int[]>>("S", () => GetSetScores(match)))
+                .WireTo(new ScoreBinding<string[]>("G", () => GetLastGameScore(match)));
 
 
             consolerunner = new ConsoleGameRunner("Enter winner 0 or 1")
@@ -132,19 +131,18 @@ namespace GameScoring.Application
 
 
 
-        // Following three functions are used by ScoreBinding objects to get scores for the scoreboard
-        // following would normally be private but are useful testing or debugging functions 
+        // Following two functions are used by ScoreBinding objects to get scores for the scoreboard
 
 
-        public int[] GetMatchScore()
-        {
-            return match.GetScore();
-        }
 
 
-        // Gets all the set scores as a List e.g. int[] { 6, 4}, {5, 7}, {6, 2}, {8, 6}
         // note: to understand following code, see wiring diagram of the application - you are reaching in through the match and the first WinnerGetsOnePoint objects using GetSubFrames to get the Sets
-        public List<int[]> GetSetScores()
+        /// <summary>
+        /// Gets all the set scores as a List e.g. int[] { 6, 4}, {5, 7}, {6, 2}, {8, 6}
+        /// </summary>
+        /// <param name="match"></param>
+        /// <returns></returns>
+        private List<int[]> GetSetScores(IConsistsOf match)
         {
             return match.GetSubFrames() // list of WinnerGetsOnePoint for sets (this just gives the winner of the set e.g. 1,0
                 .Select(sf => sf.GetSubFrames().First())  // map to actual set Frames so we can get the set scores
@@ -154,34 +152,36 @@ namespace GameScoring.Application
 
 
 
-
-
         /// <summary>
         /// Gets the current game score e.g. "30","love", "deuce","" or "adv","". If it's in a tie break, returns like "5","4"
         /// </summary>
-        public string[] GetLastGameScore()
+        private string[] GetLastGameScore(IConsistsOf match)
         {
-            // note: to understand following code, see wiring diagram of the application - you are using the GetSubFrames method to reach into the correct depth level of the score tree to the last game instance via the match, the first WinnerGetsOnePoint, the switch, the set, and the 2nd WinnerGetsOnePoint objects
             if (match.GetSubFrames().Count == 0) return new string[] { "", "" };  // no play yet
-            return IfFunction<string[]>(
-                () => match.GetSubFrames().Last()     // WinnerGetsPoint of last set
-                    .GetSubFrames().First()           // switch
-                    .GetSubFrames().First()           // either set or WinnerGetsPoint of tiebreak
-                    .GetType() == typeof(Frame),      // If type is Frame, it's a set, otherwise it's a WinnertakesPoint of a tiebreak
-                () => TranslateGameScore(
-                    match.GetSubFrames().Last()       // WinnerGetsPoint of last set
-                    .GetSubFrames().First()           // switch
-                    .GetSubFrames().First()           // last set
-                    .GetSubFrames().Last()            // WinnerGetsPoint of last game
-                    .GetSubFrames().First()           // last game
-                    .GetScore()),
-                () => match.GetSubFrames().Last()     // WinnerGetsPoint of last set
-                    .GetSubFrames().First()           // switch
-                    .GetSubFrames().First()           // WinnerGetsPoint of tiebreak
-                    .GetSubFrames().First()           // tiebreak
-                    .GetScore()
-                    .Select(n => n.ToString()).ToArray() // convert from int array to string array
-                );
+            return IfFunction(
+                () => match.GetSubFrames().Count == 0,    // no plays yet
+                () => new string[] { "", "" },
+                IfFunction(
+                    // note: to understand following code, see wiring diagram of the application - you are using the GetSubFrames method to reach into the correct depth level of the score tree to the last game instance via the match, the first WinnerGetsOnePoint, the switch, the set, and the 2nd WinnerGetsOnePoint objects
+                    () => match.GetSubFrames().Last()     // WinnerGetsPoint of last set
+                        .GetSubFrames().First()           // switch
+                        .GetSubFrames().First()           // either set or WinnerGetsPoint of tiebreak
+                        .GetType() == typeof(Frame),      // If type is Frame, it's a set, otherwise it's a WinnertakesPoint of a tiebreak
+                    () => TranslateGameScore(
+                        match.GetSubFrames().Last()       // WinnerGetsPoint of last set
+                        .GetSubFrames().First()           // switch
+                        .GetSubFrames().First()           // last set
+                        .GetSubFrames().Last()            // WinnerGetsPoint of last game
+                        .GetSubFrames().First()           // last game
+                        .GetScore()),
+                    () => match.GetSubFrames().Last()     // WinnerGetsPoint of last set
+                        .GetSubFrames().First()           // switch
+                        .GetSubFrames().First()           // WinnerGetsPoint of tiebreak
+                        .GetSubFrames().First()           // tiebreak
+                        .GetScore()
+                        .Select(n => n.ToString()).ToArray() // convert from int array to string array
+                    )
+              )();
         }
 
         
@@ -220,25 +220,30 @@ namespace GameScoring.Application
         }
 
 
-
-        private T IfFunction<T>(Func<bool> condition, Func<T> source1, Func<T> source2)
+        /// <summary>
+        /// Functional Programming style If statement. If the first parameter function eveluates to true, returns the 2nd function, else the 3rd function. (change the ternary operator syntax);
+        /// </summary>
+        /// <typeparam name="T">The return type for parameters 2 and 3</typeparam>
+        /// <param name="condition"></param>
+        /// <param name="source1"></param>
+        /// <param name="source2"></param>
+        /// <returns></returns>
+        private Func<T> IfFunction<T>(Func<bool> condition, Func<T> source1, Func<T> source2)
         {
-            if (condition())
-            {
-                return source1();
-            }
-            else
-            {
-                return source2();
-            }
+            return condition() ? source1 : source2;
         }
 
 
-        public int NSets()
-        {
-            return match.GetSubFrames().Count();
-        }
 
+
+
+
+
+        // use only for unit tests
+        public int NSets() { return match.GetSubFrames().Count(); }
+        public string[] GetLastGameScore() { return GetLastGameScore(match); }
+        public int[] GetMatchScore() { return match.GetScore(); }
+        public List<int[]> GetSetScores() { return GetSetScores(match); }
 
 
         // returns a string representation of the entire match tree - used for debugging only

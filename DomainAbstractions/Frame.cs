@@ -37,7 +37,7 @@ namespace GameScoring.DomainAbstractions
     {
         // configurations for the abstraction
         private const int nPlayers = 2;                 // TBD make this configurable
-        private Func<int, int, int[], bool> isFrameComplete;    // our lambda function that tells us when we are complete
+        private Func<int, int, int[], bool> isLambdaComplete;    // our lambda function that tells us when we are complete
         private readonly int frameNumber = 0;           // which child are we to our parent. (sometimes the lambda expressions may want to use this)
         private IConsistsOf downstream;      // this gives us the downstream object we are wired to by the application. This object only used for prototype pattern
 
@@ -80,7 +80,7 @@ namespace GameScoring.DomainAbstractions
         /// <returns>this for fluent programming style</returns>
         public Frame setIsFrameCompleteLambda(Func<int, int, int[], bool> lambda)
         {
-            isFrameComplete = lambda;
+            isLambdaComplete = lambda;
             return this;
         }
 
@@ -132,7 +132,7 @@ namespace GameScoring.DomainAbstractions
         {
             if (subFrames.Count == 0) return false; // no plays yet
             return (subFrames.Last().IsComplete()) &&  // last subframe is complete
-                (isFrameComplete == null || isFrameComplete(frameNumber, GetnPlays(), GetScore()));  // lambda is complete
+                (isLambdaComplete == null || isLambdaComplete(frameNumber, GetnPlays(), GetScore()));  // lambda is complete
         }
 
 
@@ -166,7 +166,7 @@ namespace GameScoring.DomainAbstractions
             gf.objectName = this.objectName;
             gf.subFrames = new List<IConsistsOf>();
             gf.downstream = downstream.GetCopy(0);
-            gf.isFrameComplete = this.isFrameComplete;
+            gf.isLambdaComplete = this.isLambdaComplete;
             return gf as IConsistsOf;
         }
 

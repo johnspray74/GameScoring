@@ -11,8 +11,8 @@ namespace GameScoring.Application
     {
         static void Main(string[] args)
         {
-            new Tennis().Run();
-            // new Bowling().Run();
+            // new Tennis().Run();
+            new Bowling().Run();
         }
     }
 }

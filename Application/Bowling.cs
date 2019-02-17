@@ -63,8 +63,8 @@ namespace GameScoring.Application
                 "|    ---+    ---+    ---+    ---+    ---+    ---+    ---+    ---+    ---+    ---+----\n" +
                 "|  T0-  |  T1-  |  T2-  |  T3-  |  T4-  |  T5-  |  T6-  |  T7-  |  T8-  |    T9-    |\n" +
                 "-------------------------------------------------------------------------------------\n")
-                .WireTo(new ScoreBinding<List<List<string>>>("F", () => TranslateFrameScores(GetFrameThrowScores())))
-                .WireTo(new ScoreBinding<List<int>>("T", GetAccumulatedFrameScores));
+                .WireTo(new ScoreBinding<List<List<string>>>("F", () => TranslateFrameScores(GetFrameThrowScores(game))))
+                .WireTo(new ScoreBinding<List<int>>("T", () => GetAccumulatedFrameScores(game)));
 
             consolerunner = new ConsoleGameRunner("Enter number pins:")
                 .WireTo(this);
@@ -94,10 +94,6 @@ namespace GameScoring.Application
 
 
 
-        // returns scorecard in the format of a string like:
-        // | 5 4 | 5 / | X   |
-        // |  9  |  29 |  39 |
-        // see real score cards to understand the numbers, dashes, slashes-s /s and Xs
         string IGame.GetScore()
         {
             return scorecard.Score();
@@ -187,23 +183,24 @@ namespace GameScoring.Application
         }
 
         // get a list of lists of frame ball scores
-        public List<List<int>> GetFrameThrowScores()
+        private List<List<int>> GetFrameThrowScores(IConsistsOf game)
         {
             // extract the individual ball scores from the score tree
             return game.GetSubFrames().Select(f => f.GetSubFrames().Select(b => b.GetScore()[0]).ToList()).ToList();
         }
 
 
-        public List<int> GetAccumulatedFrameScores()
+        private List<int> GetAccumulatedFrameScores(IConsistsOf game)
         {
             return game.GetSubFrames().Select(sf => sf.GetScore()[0]).Accumulate().ToList();
         }
 
-        public int GetTotalScore()
-        {
-            return game.GetScore()[0];
-        }
 
+
+        // These used only for unit testing
+        public List<int> GetAccumulatedFrameScores() { return GetAccumulatedFrameScores(game); }
+        public List<List<int>> GetFrameThrowScores() { return GetFrameThrowScores(game); }
+        public int GetTotalScore() {  return game.GetScore()[0]; }
 
 
         // A large string representing the tree structure of teh whole game - used only for debugging

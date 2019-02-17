@@ -128,7 +128,7 @@ namespace GameScoring.Application
         private List<List<string>> TranslateFrameScores(List<List<int>> frames)
         { 
             // This function looks a bit daunting but actually it just methodically makes the above example tranlations of the frame pin scores needed for a real bowling scorecard 
-            // (is there an abstractiuon to be found in this, so that it can be expressed as a set of rules similar to those above examples, and handle tennis game scoring translations as well?)
+            // (is there an abstraction to be found in this, so that it can be expressed as a set of rules similar to those above examples, and handle tennis game scoring translations as well?)
             List<List<string>> rv = new List<List<string>>(); 
             int frameNumber = 0;
             foreach (List<int> frame in frames)

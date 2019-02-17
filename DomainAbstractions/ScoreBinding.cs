@@ -39,11 +39,12 @@ namespace GameScoring.DomainAbstractions
         {
             if (typeof(T) == typeof(int))
             {
-                return Convert.ToInt32(function()).ToString();
+                return function().ToString();
             }
             if (typeof(T) == typeof(string))
             {
-                return Convert.ToString(function());
+                object temp = function();
+                return (string)temp;
             }
             return "";
         }
@@ -54,25 +55,26 @@ namespace GameScoring.DomainAbstractions
         // if one index, the GetScore function can return a list or array of type int or string
         public string GetScore(int x)
         {
+            object temp = function();
             if (typeof(T) == typeof(List<int>))
             {
-                List<int> list = (List<int>)Convert.ChangeType(function(),typeof(List<int>));
+                List<int> list = (List<int>)temp;
                 if (x < list.Count) return list[x].ToString();
             }
             if (typeof(T) == typeof(int[]))
             {
-                int[] array = (int[])Convert.ChangeType(function(), typeof(int[]));
+                int[] array = (int[])temp;
                 if (x < array.Length) return array[x].ToString();
             }
             if (typeof(T) == typeof(List<string>))
             {
-                List<string> list = (List<string>)Convert.ChangeType(function(), typeof(List<string>));
+                List<string> list = (List<string>)temp;
                 if (x < list.Count) return list[x];
             }
             if (typeof(T) == typeof(string[]))
             {
-                string[] array = (string[])Convert.ChangeType(function(), typeof(string[]));
-                if (x < array.Length) return array[x].ToString();
+                string[] array = (string[])temp;
+                if (x < array.Length) return array[x];
             }
             return "";
         }
@@ -83,19 +85,20 @@ namespace GameScoring.DomainAbstractions
         // if two indexes, the GetScore function can return a list of list of int or a list of array of int
         public string GetScore(int y, int x)
         {
+            object temp = function();
             if (typeof(T) == typeof(List<List<int>>))
             {
-                List<List<int>> list = (List<List<int>>)Convert.ChangeType(function(), typeof(List<List<int>>));
+                List<List<int>> list = (List<List<int>>)temp;
                 if (y < list.Count && x < list[y].Count) return list[y][x].ToString();
             }
             if (typeof(T) == typeof(List<List<string>>))
             {
-                List<List<string>> list = (List<List<string>>)Convert.ChangeType(function(), typeof(List<List<string>>));
+                List<List<string>> list = (List<List<string>>)temp;
                 if (y < list.Count && x < list[y].Count) return list[y][x];
             }
             if (typeof(T) == typeof(List<int[]>))
             {
-                List<int[]> list = (List<int[]>)Convert.ChangeType(function(), typeof(List<int[]>));
+                List<int[]> list = (List<int[]>)temp;
                 if (y < list.Count && x < list[y].Length) return list[y][x].ToString();
             }
             return "";

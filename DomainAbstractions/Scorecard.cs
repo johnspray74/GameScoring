@@ -33,20 +33,20 @@ namespace GameScoring.DomainAbstractions
     /// </example>
     class Scorecard
     {
-        private readonly string ASCIIDrawing;
+        private readonly string ASCIITemplate;
 
 
         /// <summary>
         /// ALA Domain Abstraction. Makes an ASCII scorecard from an ASCII template and some ScoreBindings 
         /// </summary>
-        public Scorecard(string value) { ASCIIDrawing = value; }
+        public Scorecard(string value) { ASCIITemplate = value; }
 
         List<IScoreBinding> scoreGetters = new List<IScoreBinding>();
 
-        public string Score()
+        public string GetScorecard()
         {
-            var matches = Regex.Matches(ASCIIDrawing, "(([A-Z][0-9][0-9])|([A-Z][0-9])|([A-Z]))-*"); // The regular expression matches e.g. A, B1, C12, D-, E00--
-            var rv = ASCIIDrawing;
+            var matches = Regex.Matches(ASCIITemplate, "(([A-Z][0-9][0-9])|([A-Z][0-9])|([A-Z]))-*"); // The regular expression matches e.g. A, B1, C12, D-, E00--
+            var rv = ASCIITemplate;
             foreach (Match match in matches)
             {
                 char id = match.Value[0];

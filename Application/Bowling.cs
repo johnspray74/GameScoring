@@ -96,13 +96,15 @@ namespace GameScoring.Application
 
         string IGame.GetScore()
         {
-            return scorecard.Score();
+            return scorecard.GetScorecard();
         }
 
 
 
         /// <summary>
-        /// get frame scoring transformed as needed for a real bowling scorecard. examples:
+        /// Get frame scoring translated from numbers to Xs, slashes, dashes etc.
+        /// </summary>
+        /// <example>
         /// 7,2 -> "7","2"
         /// 7,0 -> "7","-"
         /// -,3 -> "-","7"
@@ -115,7 +117,7 @@ namespace GameScoring.Application
         /// 10,7,3 -> "X","7","/"
         /// 0,10,10 -> "-","/","X"
         /// 10,10,10 -> "X","X","X"
-        /// </summary>
+        /// </example>
         /// <param name="frames">
         /// The parameter, frames, is a list of frames, each with a list of integers between 0 and 10 for the numbers of pins.
         /// </param>

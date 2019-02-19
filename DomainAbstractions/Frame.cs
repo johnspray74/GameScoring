@@ -38,17 +38,14 @@ namespace GameScoring.DomainAbstractions
         // configurations for the abstraction
         private const int nPlayers = 2;                 // TBD make this configurable
         private Func<int, int, int[], bool> isLambdaComplete;    // our lambda function that tells us when we are complete
-        private readonly int frameNumber = 0;           // which child are we to our parent. (sometimes the lambda expressions may want to use this)
-        private IConsistsOf downstream;      // this gives us the downstream object we are wired to by the application. This object only used for prototype pattern
-
-        // This is just used to identify objects during debugging 
-        private string objectName;  // used to identify objects druing debugging (e.g. can be used to compare before Console.Writeline)
-        // private StringBuilder debug = new StringBuilder();  // used to accumulate local debug information to be printed out later by the ToString method
-
-
+        private readonly int frameNumber = 0;           // which child are we to our parent. (passed to the lambda expressions in case it needs it)
+        private IConsistsOf downstream;                 // this gives us the downstream object we are wired to by the application. This object only used for prototype pattern
+        private string objectName;                      // only used to identify objects during debugging 
         // At run-time, Frame objects are built up in a composite pattern (tree structure) (Frame both provides an interface and accepts a list of the same interface.)
         // local state of the game consists only of our subtree; the leaves of which hold the individual scores:
         private List<IConsistsOf> subFrames = new List<IConsistsOf>();
+
+
 
 
         // Note we put the same summary as the class type on constructors becasue in ALA wiring code, Intellisence is mostly using constructor names.
@@ -61,7 +58,9 @@ namespace GameScoring.DomainAbstractions
         }
 
 
-        // constructor used by GetCopy sets the FrameNumber, which is a readonly property
+
+
+        // Constructor used by GetCopy sets the FrameNumber, which is a readonly property
         public Frame(int frameNumber)
         {
             this.frameNumber = frameNumber;
@@ -69,8 +68,9 @@ namespace GameScoring.DomainAbstractions
 
 
 
-        // Configuration setters. 
-        // Fluent setters return this so that you can string them together.
+        // Configuration setters follow. 
+
+
 
 
         /// <summary>
@@ -84,8 +84,11 @@ namespace GameScoring.DomainAbstractions
             return this;
         }
 
+
+
+
         // This method is provided by an extension method in the project 'Wiring'.
-        // The extension method uses reflection to do the same thing
+        // The extension method uses reflection to do the same thing as what you see here
         // The method returns the object it is called on to support fluent coding style
         /*
         public Frame WireTo(IConsistsOf c)
@@ -98,6 +101,12 @@ namespace GameScoring.DomainAbstractions
 
 
 
+
+        // Methods to implement the IConsistsOf interface follow
+
+
+
+
         /// <summary>
         /// Progresses the state of the game each time a player scores.
         /// </summary>
@@ -107,7 +116,7 @@ namespace GameScoring.DomainAbstractions
         {
             // This is where all the logic for the 'Frame' domain abstraction is 
             // We have three things to do
-            // 1. Check if we are complete, and do nothing
+            // 1. Check if we are complete, if so do nothing
             // 2. See if the last subframe is complete, if so, start a new subframe
             // 3. Pass the ball score to all subframes
 
@@ -125,11 +134,11 @@ namespace GameScoring.DomainAbstractions
         }
 
 
-        // Following five methods implement the IConsistsOf interface
 
-        // Our frame is complete when the last subframe is complete AND the lambda function says we are complete
+
         public bool IsComplete()
         {
+            // Our frame is complete when the last subframe is complete AND the lambda function says we are complete
             if (subFrames.Count == 0) return false; // no plays yet
             return (subFrames.Last().IsComplete()) &&  // last subframe is complete
                 (isLambdaComplete == null || isLambdaComplete(frameNumber, GetnPlays(), GetScore()));  // lambda is complete
@@ -137,10 +146,12 @@ namespace GameScoring.DomainAbstractions
 
 
 
+
         public int GetnPlays()
         {
             return subFrames.Count();
         }
+
 
 
 
@@ -159,6 +170,7 @@ namespace GameScoring.DomainAbstractions
 
 
 
+
         // This used when we start a new subframe. It uses the prototype pattern, that is it makes a copy of ourself and the child that was provided by the wiring.
         IConsistsOf IConsistsOf.GetCopy(int frameNumber)
         {
@@ -172,6 +184,7 @@ namespace GameScoring.DomainAbstractions
 
 
 
+
         // for debugging only -- allows us to print out a map of the whole tree
         public override string ToString()
         {
@@ -181,7 +194,6 @@ namespace GameScoring.DomainAbstractions
             sb.Append("nPlays = "); sb.Append(GetnPlays()); sb.Append(Environment.NewLine);
             sb.Append("localScore = "); sb.Append(GetScore()[0]); sb.Append(","); sb.Append(GetScore()[1]); sb.Append(Environment.NewLine); 
             sb.Append("ourFrameComplete = "); sb.Append(IsComplete()); sb.Append(Environment.NewLine);
-            // sb.Append("debug = "); sb.Append(debug); sb.Append(Environment.NewLine);
             if (downstream == null) sb.Append("no subframes");
             else
             {

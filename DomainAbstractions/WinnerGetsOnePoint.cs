@@ -17,14 +17,12 @@ namespace GameScoring.DomainAbstractions
     /// </remarks>
     public class WinnerTakesPoint : IConsistsOf
     {
-        private string objectName;  // used to identify objects druing debugging (e.g. can be used to compare before Console.Writeline) Becasue of ALA use of abstractions, instances must be identifiable during debug
+        private IConsistsOf downStreamFrame;            // 
+        private readonly int frameNumber = 0;           // Which child are we to our parent
+        private string objectName;                      // only used to identify objects druing debugging
 
 
-        // local state consists of our single downstream frame, the frame score, the state of the frame (completed), and the number of plays so far within the frame.
-        private IConsistsOf downStreamFrame; // 
 
-        // state of the game variables
-        private readonly int frameNumber = 0;           // This is where our Frame is in the sequence of Frames (sometimes the lambda expressions may want to use this)
 
 
         /// <summary>
@@ -47,6 +45,7 @@ namespace GameScoring.DomainAbstractions
 
 
 
+
         // This method is provided by an extension method in the project 'Wiring'.
         // The extension method uses reflection to do the same thing
         // The method returns the object it is called on to support fluent coding style
@@ -57,6 +56,8 @@ namespace GameScoring.DomainAbstractions
             return this;
         }
         */
+
+
 
 
         public void Ball(int player, int score)
@@ -74,13 +75,16 @@ namespace GameScoring.DomainAbstractions
         public bool IsComplete() { return downStreamFrame.IsComplete(); }
 
 
+
+
         public int GetnPlays() { return downStreamFrame.GetnPlays(); }
 
+
+
+        // This is the where all the logic for WinnerTakesPoint is
         public int[] GetScore()
         {
-            // scoring algorthm is 1 point if subframe won
-            // determine which player had the higher score and give that player one point in our local score state
-            int[] localScore = { 0, 0 };            // local score for our Frame
+            int[] localScore = { 0, 0 };    
             if (IsComplete())
             { 
                 int[] s = downStreamFrame.GetScore();
@@ -89,6 +93,9 @@ namespace GameScoring.DomainAbstractions
             }
             return localScore;
         }
+
+
+
 
         List<IConsistsOf> IConsistsOf.GetSubFrames()
         {

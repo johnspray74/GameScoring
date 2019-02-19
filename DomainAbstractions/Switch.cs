@@ -25,16 +25,12 @@ namespace GameScoring.DomainAbstractions
     /// </example>
     public class Switch : IConsistsOf
     {
+        private IConsistsOf downStreamFrame1;           // the one we start with 
+        private IConsistsOf downStreamFrame2;           // the one we switch to
+        private Func<int, int, int[], bool> isLambdaComplete;
         private string objectName;                      // Just used to identify objects druing debugging. Becasue ALA makes many instances from abstractions, it is useful for them to be identifiable during debug  (e.g. can be used to compare before Console.Writeline)
         private readonly int frameNumber = 0;           // This is our child number of our parent, also useful to identify instances (sometimes a lambda expressions may want to use this)
 
-
-        // local state consists of our two downstream IConsistOf objects
-        private IConsistsOf downStreamFrame1;          // 
-        private IConsistsOf downStreamFrame2;          // 
-
-        // configurations for the abstraction
-        private Func<int, int, int[], bool> isSwitchCompleteLambda;
 
 
 
@@ -56,6 +52,7 @@ namespace GameScoring.DomainAbstractions
 
 
 
+
         /// <summary>
         /// Set a lambda function that must return true when we need to switch to the second subgame. Function gets three parameters: frameNumber, nPlays, score
         /// </summary>
@@ -63,9 +60,12 @@ namespace GameScoring.DomainAbstractions
         /// <returns>this for fluent programming style</returns>
         public Switch setSwitchLambda(Func<int, int, int[], bool> lambda)
         {
-            isSwitchCompleteLambda = lambda;
+            isLambdaComplete = lambda;
             return this;
         }
+
+
+
 
 
         // This method is provided by an extension method in the project 'Wiring'.
@@ -86,6 +86,9 @@ namespace GameScoring.DomainAbstractions
         }
         */
 
+
+
+
         public void Ball(int player, int score)
         {
             if (IsSwitched())
@@ -99,37 +102,30 @@ namespace GameScoring.DomainAbstractions
         }
 
 
+
+
         public bool IsComplete()
         {
-            if (IsSwitched())
-            {
-                return downStreamFrame2.IsComplete();
-            }
-            else
-            {
-                return downStreamFrame1.IsComplete();
-            }
+            return IsSwitched() ? downStreamFrame2.IsComplete() : downStreamFrame1.IsComplete();
         }
+
 
 
 
         private bool IsSwitched()
         {
-            return isSwitchCompleteLambda!=null && isSwitchCompleteLambda(frameNumber, downStreamFrame1.GetnPlays(), downStreamFrame1.GetScore());
+            return isLambdaComplete!=null && isLambdaComplete(frameNumber, downStreamFrame1.GetnPlays(), downStreamFrame1.GetScore());
         }
+
+
 
 
         public int GetnPlays()
         {
-            if (IsSwitched())
-            {
-                return downStreamFrame2.GetnPlays();
-            }
-            else
-            {
-                return downStreamFrame1.GetnPlays();
-            }
+            return IsSwitched() ? downStreamFrame2.GetnPlays() : downStreamFrame1.GetnPlays();
         }
+
+
 
 
         public int[] GetScore()
@@ -146,19 +142,12 @@ namespace GameScoring.DomainAbstractions
 
 
 
+
         List<IConsistsOf> IConsistsOf.GetSubFrames()
         {
-            IConsistsOf downstreamframe;
-            if (IsSwitched())
-            {
-                downstreamframe = downStreamFrame2;
-            }
-            else
-            {
-                downstreamframe = downStreamFrame1;
-            }
-            return new List<IConsistsOf> { downstreamframe };
+            return new List<IConsistsOf> { IsSwitched() ? downStreamFrame2 : downStreamFrame1 };
         }
+
 
 
 
@@ -174,10 +163,11 @@ namespace GameScoring.DomainAbstractions
             {
                 sw.downStreamFrame2 = downStreamFrame2.GetCopy(frameNumber);
             }
-            sw.isSwitchCompleteLambda = this.isSwitchCompleteLambda;
+            sw.isLambdaComplete = this.isLambdaComplete;
             sw.objectName = this.objectName;
             return sw as IConsistsOf;
         }
+
 
 
 

@@ -28,21 +28,17 @@ namespace GameScoring.DomainAbstractions
     /// </remarks>
     public class Bonuses : IConsistsOf
     {
-        private string objectName;  // used to identify objects during debugging (e.g. can be used to compare before Console.Writeline) Becasue of ALA use of abstractions, instances must be identifiable during debug
-
-
         // configurations for the abstraction
-        private Func<int, int, bool> isBonusesComplete;
 
-        // local state consists of our single downstream frame, and the bonus score.
-        private IConsistsOf downStreamFrame; 
-
-
-
-        // state of the game variables
-        private readonly int frameNumber = 0;           // This is where our Frame is in the sequence of Frames (sometimes the lambda expressions may want to use this)
-        private int bonusScore;
+        private IConsistsOf downStreamFrame;            // We should be wired to a downstream something
+        private int bonusScore;                         // local state consists of the bonus score, and number of bonus plays
         private int bonusBalls;
+        private readonly int frameNumber = 0;           // which child are we to our parent. (sometimes the lambda expressions may want to use this)
+        private Func<int, int, bool> lambdaFunction;
+        private string objectName;                      // only used to identify objects during debugging
+
+
+
 
         public Bonuses(string name)
         {
@@ -50,10 +46,19 @@ namespace GameScoring.DomainAbstractions
         }
 
 
+
+
         public Bonuses(int frameNumber)
         {
             this.frameNumber = frameNumber;
         }
+
+
+
+
+        // Following functions are for configuration
+
+
 
 
         /// <summary>
@@ -63,7 +68,7 @@ namespace GameScoring.DomainAbstractions
         /// <returns>this for fluent programming style</returns>
         public Bonuses setIsBonusesCompleteLambda(Func<int, int, bool> lambda)
         {
-            isBonusesComplete = lambda;
+            lambdaFunction = lambda;
             return this;
         }
 
@@ -71,17 +76,34 @@ namespace GameScoring.DomainAbstractions
 
 
         // This method is provided by an extension method in the project 'Wiring'.
-        // The extension method uses reflection to do the same thing
+        // The extension method uses reflection to do the same thing as what you see here
         // The method returns the object it is called on to support fluent coding style
-/*
-        public Bonuses WireTo(IConsistsOf c)
-        {
-            downStreamFrame = c;
-            return this;
-        }
-*/
+        /*
+                public Bonuses WireTo(IConsistsOf c)
+                {
+                    downStreamFrame = c;
+                    return this;
+                }
+        */
 
- 
+
+
+
+
+        private bool IsBonusScoringComplete()
+        {
+            return IsComplete() && (lambdaFunction == null || lambdaFunction(GetnPlays() + bonusBalls, downStreamFrame.GetScore()[0]));
+        }
+
+
+
+
+
+
+        // Following function implement the IConsistsOf interface
+
+
+
         /// <summary>
         /// Drives the game forward by one play. Use one of the parameters to indicate the result of the play.
         /// </summary>
@@ -91,13 +113,13 @@ namespace GameScoring.DomainAbstractions
         {
             // This is where all the logic for the abstraction is 
             // We have three things to do
-            // 1. Pass through the Ball function to our downstream frame
-            // 2. Call our local lambda to see if bonuses are complete
-            // 3. After the downstream frame completes, if bonuses are still pending, add further throws to our local score.
+            // 1. Check if we are finished and if so do nothing
+            // 2. After the downstream frame completes, add further throws to our local score. Stop when the lambda function says we are complete
+            // 3. As uaual pass through the Ball scores downstream
 
-            if (IsScoringComplete()) return;
+            if (IsBonusScoringComplete()) return;
 
-            if (IsComplete() && !IsScoringComplete())
+            if (IsComplete() && !IsBonusScoringComplete())
             {
                 bonusScore += score;
                 bonusBalls++;
@@ -109,15 +131,19 @@ namespace GameScoring.DomainAbstractions
 
 
 
-        private bool IsScoringComplete()
-        {
-            return IsComplete() && (isBonusesComplete==null || isBonusesComplete(GetnPlays()+bonusBalls, downStreamFrame.GetScore()[0]));
-        }
+
 
         public bool IsComplete() { return downStreamFrame.IsComplete(); }
 
+
+
+
  
         public int GetnPlays() { return downStreamFrame.GetnPlays();  }
+
+
+
+
 
 
         int[] IConsistsOf.GetScore()
@@ -129,10 +155,14 @@ namespace GameScoring.DomainAbstractions
 
 
 
+
+
         List<IConsistsOf> IConsistsOf.GetSubFrames()
         {
             return downStreamFrame.GetSubFrames();
         }
+
+
 
 
 
@@ -144,9 +174,12 @@ namespace GameScoring.DomainAbstractions
             {
                 bs.downStreamFrame = downStreamFrame.GetCopy(frameNumber);
             }
-            bs.isBonusesComplete = this.isBonusesComplete;
+            bs.lambdaFunction = this.lambdaFunction;
             return bs as IConsistsOf;
         }
+
+
+
 
 
 
@@ -158,7 +191,7 @@ namespace GameScoring.DomainAbstractions
             sb.Append("nBonusBalls = "); sb.Append(bonusBalls); sb.Append(Environment.NewLine);
             sb.Append("bonusScore = "); sb.Append(bonusScore); sb.Append(","); sb.Append(Environment.NewLine);
             sb.Append("Complete = "); sb.Append(IsComplete()); sb.Append(Environment.NewLine);
-            sb.Append("ScoringComplete = "); sb.Append(IsScoringComplete()); sb.Append(Environment.NewLine);
+            sb.Append("ScoringComplete = "); sb.Append(IsBonusScoringComplete()); sb.Append(Environment.NewLine);
             if (downStreamFrame == null) sb.Append("no downstream frame");
             else
             {

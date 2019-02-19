@@ -37,23 +37,22 @@ namespace GameScoring.Application
             // This section of code is generated manually from the diagram
             // Go change the diagram first where you can reason about the logic, then come here and make it match the diagram
             // Note following code uses the fluent pattern - every method returns the this reference of the object it is called on.
-            game = new Frame("game")        // Frame to represent the whole game of ten frames
+            game = new Frame("game")       
                 .setIsFrameCompleteLambda((gameNumber, frames, score) => frames == 10)
-                .WireTo(new Bonuses("bonus")                               // Frame to represent one bowling Frame, and add the bonuses for spares and strikes.
+                .WireTo(new Bonuses("bonus")                               
                     .setIsBonusesCompleteLambda((plays, score) => score < 10 || plays == 3)
-                    .WireTo(new Frame("frame")                  // Frame to represent one bowling Frame without spares or strikes
+                    .WireTo(new Frame("frame")                 
                         .setIsFrameCompleteLambda((frameNumber, balls, pins) => frameNumber < 9 && (balls == 2 || pins[0] == 10) || (balls == 2 && pins[0] < 10 || balls == 3))
-                        // Note in the lambda expression above that frame 9 is different - it can complete after 3 balls and the score card records 3 ball scores instead of 2.
-                        .WireTo(new SinglePlay("SinglePlay")               // represents the pins scored for one ball
+                        .WireTo(new SinglePlay("SinglePlay")               
                 )));
 
             /*
-                    // kids simple rules rules game 
-                    private IConsistsOf kidsGame = new Frame("game")  // Frame to represent the whole game of five frames
+                    // kids simple rules rules game: 5 frames, up to 3 balls each
+                    private IConsistsOf kidsGame = new Frame("game") 
                         .setIsFrameCompleteLambda((gameNumber, frames, score) => frames==5)
-                        .WireTo(new Frame("frame")                 // Frame to represent one bowling Frame
-                            .setIsFrameCompleteLambda((frameNumber, balls, pins) => balls==3 || pins[0] == 10)  // give the kids 3 balls every frame and keep all frames the same
-                                .WireTo(new SinglePlay("SinglePlay")               // represents the pins scored for one ball
+                        .WireTo(new Frame("frame")               
+                            .setIsFrameCompleteLambda((frameNumber, balls, pins) => balls==3 || pins[0] == 10)
+                                .WireTo(new SinglePlay("SinglePlay")             
                         ));
             */
 
@@ -71,10 +70,14 @@ namespace GameScoring.Application
         }
 
 
+
+
         public void Run()
         {
             consolerunner.Run();
         }
+
+
 
 
         // Following three functions are the interface used by whatever is running the game, such as a console runner
@@ -98,6 +101,7 @@ namespace GameScoring.Application
         {
             return scorecard.GetScorecard();
         }
+
 
 
 
@@ -179,10 +183,15 @@ namespace GameScoring.Application
         }
 
 
+
+
         public int NFrames()
         {
             return game.GetSubFrames().Count();
         }
+
+
+
 
         // get a list of lists of frame ball scores
         private List<List<int>> GetFrameThrowScores(IConsistsOf game)
@@ -192,6 +201,8 @@ namespace GameScoring.Application
         }
 
 
+
+
         private List<int> GetAccumulatedFrameScores(IConsistsOf game)
         {
             return game.GetSubFrames().Select(sf => sf.GetScore()[0]).Accumulate().ToList();
@@ -199,10 +210,13 @@ namespace GameScoring.Application
 
 
 
+
         // These used only for unit testing
         public List<int> GetAccumulatedFrameScores() { return GetAccumulatedFrameScores(game); }
         public List<List<int>> GetFrameThrowScores() { return GetFrameThrowScores(game); }
         public int GetTotalScore() {  return game.GetScore()[0]; }
+
+
 
 
         // A large string representing the tree structure of teh whole game - used only for debugging

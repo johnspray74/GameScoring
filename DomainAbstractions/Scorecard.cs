@@ -34,6 +34,9 @@ namespace GameScoring.DomainAbstractions
     class Scorecard
     {
         private readonly string ASCIITemplate;
+        List<IScoreBinding> scoreGetters = new List<IScoreBinding>();
+
+
 
 
         /// <summary>
@@ -41,12 +44,15 @@ namespace GameScoring.DomainAbstractions
         /// </summary>
         public Scorecard(string value) { ASCIITemplate = value; }
 
-        List<IScoreBinding> scoreGetters = new List<IScoreBinding>();
+
+
+
 
         public string GetScorecard()
         {
-            var matches = Regex.Matches(ASCIITemplate, "(([A-Z][0-9][0-9])|([A-Z][0-9])|([A-Z]))-*"); // The regular expression matches e.g. A, B1, C12, D-, E00--
+            // Get the scorecard template, write in all the scores 
             var rv = ASCIITemplate;
+            var matches = Regex.Matches(ASCIITemplate, "(([A-Z][0-9][0-9])|([A-Z][0-9])|([A-Z]))-*"); // The regular expression matches e.g. A, B1, C12, D-, E00--
             foreach (Match match in matches)
             {
                 char id = match.Value[0];

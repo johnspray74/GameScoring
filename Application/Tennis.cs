@@ -38,26 +38,26 @@ namespace GameScoring.Application
 
         public Tennis()
         {
-            // Go change the diagram first where you can reason about the logic, then come here and make it match the diagram
+            // This code is hand written from the diagram. Go change the diagram first where you can reason about the logic, then come here and make it match the diagram
             // Note following code uses the fluent pattern - every method returns the this reference of the object it is called on.
             match = new Frame("match")      // (note the string is just used to identify instances during debugging, but also helps reading this code to know what they are for)
                 .setIsFrameCompleteLambda((matchNumber, nSets, score) => score.Max() == 3)  // best of 5 sets is first to win 3 sets
-                .WireTo(new WinnerTakesPoint("winnerOfSet")            // Reduce set score to one point for winner e.g. 6,4 to 1,0
+                .WireTo(new WinnerTakesPoint("winnerOfSet")           
                     .WireTo(new Switch("switch")
-                        .setSwitchLambda((setNumber, nGames, score) => (setNumber < 4 && score[0] == 6 && score[1] == 6))   // switch to tiebreak when set score is 6,6, except last set
+                        .setSwitchLambda((setNumber, nGames, score) => (setNumber < 4 && score[0] == 6 && score[1] == 6))  
                         .WireTo(new Frame("set")
-                            .setIsFrameCompleteLambda((setNumber, nGames, score) => score.Max() >= 6 && Math.Abs(score[0] - score[1]) >= 2)  // A set completes when one player wins 6 games with a margin of 2
-                            .WireTo(new WinnerTakesPoint("winnerOfGame")            // Convert game score to one point for winner
+                            .setIsFrameCompleteLambda((setNumber, nGames, score) => score.Max() >= 6 && Math.Abs(score[0] - score[1]) >= 2)  
+                            .WireTo(new WinnerTakesPoint("winnerOfGame")          
                                 .WireTo(new Frame("game")
                                     .setIsFrameCompleteLambda((gameNumber, nBalls, score) => score.Max() >= 4 && Math.Abs(score[0] - score[1]) >= 2)
-                                    .WireTo(new SinglePlay("singlePlayGame"))    // Must always terminate the chain with SinglePlay
+                                    .WireTo(new SinglePlay("singlePlayGame"))    
                                 )
                             )
                         )
-                        .WireTo(new WinnerTakesPoint("winnerOfTieBreak")            // Convert tiebreak score to one point for winner e.g. 6,7 -> 0,1
+                        .WireTo(new WinnerTakesPoint("winnerOfTieBreak")         
                             .WireTo(new Frame("tiebreak")
                                 .setIsFrameCompleteLambda((setNumber, nBalls, score) => score.Max() == 7)
-                                .WireTo(new SinglePlay("singlePlayTiebreak"))    // Must always terminate the chain with SinglePlay
+                                .WireTo(new SinglePlay("singlePlayTiebreak"))    
                         )
                     )
                 )
@@ -80,6 +80,10 @@ namespace GameScoring.Application
 
         }
 
+
+
+
+
         /// <summary>
         /// Starts the Tennis game running
         /// </summary>
@@ -95,6 +99,8 @@ namespace GameScoring.Application
         // Also used by tests
 
 
+
+
         /// <summary>
         /// Call this after every Tennis point. Pass in the winner as 0 or 1
         /// </summary>
@@ -104,6 +110,9 @@ namespace GameScoring.Application
             match.Ball(result, 1);
         }
 
+
+
+
         /// <summary>
         /// Returns true when the entrie Tennis match is complete
         /// </summary>
@@ -112,6 +121,8 @@ namespace GameScoring.Application
         {
             return match.IsComplete();
         }
+
+
 
 
         /// <summary>
@@ -131,7 +142,7 @@ namespace GameScoring.Application
 
 
 
-        // Following two functions are used by ScoreBinding objects to get scores for the scoreboard
+        // Following two functions know how to get scores from the tree structure
 
 
 
@@ -149,6 +160,7 @@ namespace GameScoring.Application
                 .Select(s => s.GetScore()) // get the scores from the sets
                 .ToList();
         }
+
 
 
 
@@ -183,6 +195,8 @@ namespace GameScoring.Application
                     )
               )();
         }
+
+
 
         
         /// <summary>
@@ -220,6 +234,8 @@ namespace GameScoring.Application
         }
 
 
+
+
         /// <summary>
         /// Functional Programming style If statement. If the first parameter function eveluates to true, returns the 2nd function, else the 3rd function. (change the ternary operator syntax);
         /// </summary>
@@ -236,14 +252,14 @@ namespace GameScoring.Application
 
 
 
-
-
-
-        // use only for unit tests
+        // used only for unit tests
         public int NSets() { return match.GetSubFrames().Count(); }
         public string[] GetLastGameScore() { return GetLastGameScore(match); }
         public int[] GetMatchScore() { return match.GetScore(); }
         public List<int[]> GetSetScores() { return GetSetScores(match); }
+
+
+
 
 
         // returns a string representation of the entire match tree - used for debugging only

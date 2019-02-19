@@ -23,6 +23,9 @@ namespace GameScoring.ProgrammingParadigms
             }
         }
 
+
+
+
         /// <summary>
         /// Returns an integer array where elements are the sum of corresponding elements in an IEnumerable of integer arrays
         /// </summary>
@@ -40,6 +43,9 @@ namespace GameScoring.ProgrammingParadigms
             }
             return sum;
         }
+
+
+
 
         /// <summary>
         /// Adds two int arrays. Corresponding elements are added. 

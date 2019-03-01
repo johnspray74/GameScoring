@@ -7,7 +7,7 @@ using GameScoring.Application;
 namespace Tests
 {
     [TestClass]
-    public class TestsScoringEngineTennis
+    public class TestScoringEngineTennis
     {
         Tennis game;
 

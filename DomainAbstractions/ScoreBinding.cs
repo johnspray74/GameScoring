@@ -14,24 +14,26 @@ namespace GameScoring.DomainAbstractions
     /// ScoreBinding is a domain abstraction in ALA architecture.
     /// It implements the IScoreBinding interface, which scorecard or ScoreBoard types of abstractions can use.
     /// It is typically used with scorecard instances to bind locations on the scoreboard to functions that get the score for that location
-    /// It is configured with a label, which a scorecard would typically use at various locations on teh card..
-    /// It has a method that is called to get the score.
+    /// It is configured with a label, which a scorecard would typically use at various locations on the card.
+    /// It has a method that is called to get the score, with 3 overloads for 0, 1 or 2 indexes
     /// This abstraction can handle any type useful for returning a single valued score or multi-valued scores in 1 or two dimensions.
     /// see example tenpin bowling and tennis applciations to see example usage of this domain abstraction.
     /// </remarks>
     /// <typeparam name="T"></typeparam>
     class ScoreBinding<T> : IScoreBinding
     {
-        private readonly string label;
+        public string Label { get; }
         private readonly Func<T> function;
+
+
+
 
         /// <summary>
         /// ALA Domain Abstraction. Binds a function that gets a score in one of a variety of types and associates it to an identying label (for example the label is on a Scorecard).
         /// </summary>
-        public ScoreBinding(String l, Func<T> f) { label = l; function = f; }
+        public ScoreBinding(String l, Func<T> f) { Label = l; function = f; }
 
 
-        public string Label { get { return label; } }
 
 
         // if no index, the GetScore function can return int or string
@@ -82,7 +84,7 @@ namespace GameScoring.DomainAbstractions
 
 
 
-        // if two indexes, the GetScore function can return a list of list of int or a list of array of int
+        // if two indexes, the GetScore function can return a list of list or a list of array
         public string GetScore(int y, int x)
         {
             object temp = function();

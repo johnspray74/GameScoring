@@ -9,7 +9,7 @@ namespace Tests
 {
 
     [TestClass]
-    public class TestsScoringEnginesBowling
+    public class TestScoringEngineBowling
     {
         GameScoring.Application.Bowling game;
 

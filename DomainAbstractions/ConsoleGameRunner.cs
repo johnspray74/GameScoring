@@ -9,7 +9,7 @@ namespace GameScoring.Application
 {
     /// <summary>
     /// Console UI for running games. 
-    /// It will prompt for input, pass the input to the game it is wired to, and then ask the game for an ASCII representation of the score to display. Will repeat that until the game completes.
+    /// Will prompt for input, pass the input to the game it is wired to, and then ask the game for an ASCII representation of the score to display. Will repeat that until the game completes.
     /// </summary>
     /// <remarks>
     /// It uses the IGame interface to interface with a game
@@ -19,11 +19,17 @@ namespace GameScoring.Application
         private IGame game;  // wired by the WireTo method to a game class such as Tennis or Bowling
         private readonly string prompt;
 
+
+
+
         /// <summary>
         /// Console UI for running games. 
         /// It will prompt for input, pass the input to the game it is wired to, and then ask the game for an ASCII representation of the score to display. Will repeat that until the game completes.
         /// </summary>
         public ConsoleGameRunner(string prompt) { this.prompt = prompt; }
+
+
+
 
         public void Run()
         {

@@ -122,7 +122,7 @@ namespace GameScoring.Application
         {
             // uses two domain abstractions to express the requirements of scoring
 
-            return scorecard.GetScorecard();
+            return (scorecard as IPullDataFlow<string>).GetData();
         }
 
 

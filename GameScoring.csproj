@@ -7,7 +7,7 @@
     <ProjectGuid>{D03F8AC5-2AB4-4DA1-9386-011C7F575221}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Bowling</RootNamespace>
+    <RootNamespace>GameScoring</RootNamespace>
     <AssemblyName>Bowling</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -63,6 +63,7 @@
     <Compile Include="Application\Bowling.cs" />
     <Compile Include="Application\Start.cs" />
     <Compile Include="DomainAbstractions\ConsoleGameRunner.cs" />
+    <Compile Include="DomainAbstractions\IGameToIConsistsOfAdapter.cs" />
     <Compile Include="DomainAbstractions\Scorecard.cs" />
     <Compile Include="DomainAbstractions\ScoreBinding.cs" />
     <Compile Include="DomainAbstractions\SinglePlay.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="DomainAbstractions\Frame.cs" />
     <Compile Include="ProgrammingParadigms\IConsistsOf.cs" />
     <Compile Include="ProgrammingParadigms\IGame.cs" />
+    <Compile Include="ProgrammingParadigms\IPullDataFlow.cs" />
     <Compile Include="ProgrammingParadigms\IScoreBinding.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Application\Tennis.cs" />

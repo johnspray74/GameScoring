@@ -31,7 +31,7 @@ namespace GameScoring.DomainAbstractions
     ///            .WireTo(new ScoreBinding&lt;string[]&gt;("G", GetLastGameScore)
     ///            );  
     /// </example>
-    class Scorecard
+    class Scorecard : IPullDataFlow<string>
     {
         private readonly string ASCIITemplate;
 
@@ -43,7 +43,7 @@ namespace GameScoring.DomainAbstractions
 
         List<IScoreBinding> scoreGetters = new List<IScoreBinding>();
 
-        public string GetScorecard()
+        string IPullDataFlow<string>.GetData()
         {
             var matches = Regex.Matches(ASCIITemplate, "(([A-Z][0-9][0-9])|([A-Z][0-9])|([A-Z]))-*"); // The regular expression matches e.g. A, B1, C12, D-, E00--
             var rv = ASCIITemplate;

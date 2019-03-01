@@ -25,14 +25,14 @@ namespace GameScoring.Application
     ///  ScoreBinding - configure with a function that gets the score, and a single letter to identify the score. It can return a single scores, a lists of scores, or a list of list of scores and a few other variations.
     /// You also need knowledge of the WireTo extension method - if one object implements an interface and another has a private field of that interface (or a list of) it wires them together.
     /// </summary>
-    public class Bowling : IGame
+    public class Bowling
     {
         private IConsistsOf game;
         private Scorecard scorecard;
         private ConsoleGameRunner consolerunner;
 
         public Bowling()
-        { 
+        {
             // standard rules game
             // This section of code is generated manually from the diagram
             // Go change the diagram first where you can reason about the logic, then come here and make it match the diagram
@@ -57,17 +57,20 @@ namespace GameScoring.Application
                         ));
             */
 
-            scorecard = new Scorecard(
-                "-------------------------------------------------------------------------------------\n" +
-                "|F00|F01|F10|F11|F20|F21|F30|F31|F40|F41|F50|F51|F60|F61|F70|F71|F80|F81|F90|F91|F92|\n" +
-                "|    ---+    ---+    ---+    ---+    ---+    ---+    ---+    ---+    ---+    ---+----\n" +
-                "|  T0-  |  T1-  |  T2-  |  T3-  |  T4-  |  T5-  |  T6-  |  T7-  |  T8-  |    T9-    |\n" +
-                "-------------------------------------------------------------------------------------\n")
-                .WireTo(new ScoreBinding<List<List<string>>>("F", () => TranslateFrameScores(GetFrameThrowScores(game))))
-                .WireTo(new ScoreBinding<List<int>>("T", () => GetAccumulatedFrameScores(game)));
 
             consolerunner = new ConsoleGameRunner("Enter number pins:")
-                .WireTo(this);
+                .WireTo(new IGameToIConsistsOfAdapter((pins, scorer) => scorer.Ball(0, pins))
+                    .WireTo(new Scorecard(
+                        "-------------------------------------------------------------------------------------\n" +
+                        "|F00|F01|F10|F11|F20|F21|F30|F31|F40|F41|F50|F51|F60|F61|F70|F71|F80|F81|F90|F91|F92|\n" +
+                        "|    ---+    ---+    ---+    ---+    ---+    ---+    ---+    ---+    ---+    ---+----\n" +
+                        "|  T0-  |  T1-  |  T2-  |  T3-  |  T4-  |  T5-  |  T6-  |  T7-  |  T8-  |    T9-    |\n" +
+                        "-------------------------------------------------------------------------------------\n")
+                        .WireTo(new ScoreBinding<List<List<string>>>("F", () => TranslateFrameScores(GetFrameThrowScores(game))))
+                        .WireTo(new ScoreBinding<List<int>>("T", () => GetAccumulatedFrameScores(game)))
+                    )
+                    .WireTo(game)
+                );
         }
 
 
@@ -79,25 +82,7 @@ namespace GameScoring.Application
 
         // Following three functions are the interface used by whatever is running the game, such as a console runner
 
-        public void Play(int result)
-        {
-            // A play is a throw
-            // result is the number of pins
-            game.Ball(0,result);  // scoring one player, so the player index is always 0.
-            // (if two players you need a second instance of the application, because the tree structure of Frames is different for each.)
-        }
 
-        public bool IsComplete()
-        {
-            return game.IsComplete();
-        }
-
-
-
-        string IGame.GetScore()
-        {
-            return scorecard.GetScorecard();
-        }
 
 
 
@@ -179,11 +164,6 @@ namespace GameScoring.Application
         }
 
 
-        public int NFrames()
-        {
-            return game.GetSubFrames().Count();
-        }
-
         // get a list of lists of frame ball scores
         private List<List<int>> GetFrameThrowScores(IConsistsOf game)
         {
@@ -200,6 +180,27 @@ namespace GameScoring.Application
 
 
         // These used only for unit testing
+
+        public int NFrames()
+        {
+            return game.GetSubFrames().Count();
+        }
+
+
+        public void Play(int result)
+        {
+            // A play is a throw, result is the number of pins
+            game.Ball(0, result);  // scoring one player, so the player index is always 0.
+            // (if two players you need a second instance of the application, because the tree structure of Frames is different for each.)
+        }
+
+        public bool IsComplete()
+        {
+            return game.IsComplete();
+        }
+
+
+
         public List<int> GetAccumulatedFrameScores() { return GetAccumulatedFrameScores(game); }
         public List<List<int>> GetFrameThrowScores() { return GetFrameThrowScores(game); }
         public int GetTotalScore() {  return game.GetScore()[0]; }

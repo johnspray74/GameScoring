@@ -92,10 +92,13 @@ namespace GameScoring.Application
             consolerunner.Run();
         }
 
+        // uncomment to run Bowling
+        /*
         static void Main(string[] args)
         {
             new Tennis().Run();
         }
+        */
 
 
 
@@ -109,7 +112,6 @@ namespace GameScoring.Application
 
 
 
-        // note: to understand following code, see wiring diagram of the application - you are reaching in through the match and the first WinnerGetsOnePoint objects using GetSubFrames to get the Sets
         /// <summary>
         /// Gets all the set scores as a List e.g. int[] { 6, 4}, {5, 7}, {6, 2}, {8, 6}
         /// </summary>
@@ -117,6 +119,7 @@ namespace GameScoring.Application
         /// <returns></returns>
         private List<int[]> GetSetScores(IConsistsOf match)
         {
+            // note: to understand following code, see wiring diagram of the application - you are reaching in through the match and the first WinnerGetsOnePoint objects using GetSubFrames to get the Sets
             return match.GetSubFrames() // list of WinnerGetsOnePoint for sets (this just gives the winner of the set e.g. 1,0
                 .Select(sf => sf.GetSubFrames().First())  // map to actual set Frames so we can get the set scores
                 .Select(s => s.GetScore()) // get the scores from the sets
@@ -140,14 +143,14 @@ namespace GameScoring.Application
             {
                 return
                    TranslateGameScore(
-                       set.GetSubFrames().Last()            // WinnerGetsPoint of last game
-                       .GetSubFrames().First()           // last game
+                       set.GetSubFrames().Last()          // WinnerGetsPoint of last game
+                       .GetSubFrames().First()            // last game
                        .GetScore());
             }
             else // it was a tiebreak
             {
                 return 
-                        set.GetSubFrames().First()           // tiebreak
+                        set.GetSubFrames().First()        // tiebreak
                         .GetScore()
                         .Select(n => n.ToString()).ToArray();
             }
@@ -157,7 +160,7 @@ namespace GameScoring.Application
 
         
         /// <summary>
-        /// By example, does the follwing tranlations
+        /// By example, does the following tranlations
         /// 0,0 => "" (no play yet)
         /// 1,0 => "15","love"
         /// 2,0 => "30","love"
@@ -191,20 +194,6 @@ namespace GameScoring.Application
         }
 
 
-
-
-        /// <summary>
-        /// Functional Programming style If statement. If the first parameter function eveluates to true, returns the 2nd function, else the 3rd function. (change the ternary operator syntax);
-        /// </summary>
-        /// <typeparam name="T">The return type for parameters 2 and 3</typeparam>
-        /// <param name="condition"></param>
-        /// <param name="source1"></param>
-        /// <param name="source2"></param>
-        /// <returns></returns>
-        private Func<T> IfFunction<T>(Func<bool> condition, Func<T> source1, Func<T> source2)
-        {
-            return condition() ? source1 : source2;
-        }
 
 
 

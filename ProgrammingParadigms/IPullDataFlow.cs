@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace GameScoring.ProgrammingParadigms
 {
-    interface IGame
+    interface IPullDataFlow<T>
     {
-        void Play(int result);
-        bool IsComplete();
-        string GetScore();
+        T GetData();
     }
 }

@@ -65,7 +65,6 @@
     <Compile Include="Application\ITestTennis.cs" />
     <Compile Include="Application\Start.cs" />
     <Compile Include="DomainAbstractions\ConsoleGameRunner.cs" />
-    <Compile Include="DomainAbstractions\IGameToIConsistsOfAdapter.cs" />
     <Compile Include="DomainAbstractions\Scorecard.cs" />
     <Compile Include="DomainAbstractions\ScoreBinding.cs" />
     <Compile Include="DomainAbstractions\SinglePlay.cs" />
@@ -76,7 +75,6 @@
     <Compile Include="ProgrammingParadigms\ExtensionMethods.cs" />
     <Compile Include="DomainAbstractions\Frame.cs" />
     <Compile Include="ProgrammingParadigms\IConsistsOf.cs" />
-    <Compile Include="ProgrammingParadigms\IGame.cs" />
     <Compile Include="ProgrammingParadigms\IPullDataFlow.cs" />
     <Compile Include="ProgrammingParadigms\IScoreBinding.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

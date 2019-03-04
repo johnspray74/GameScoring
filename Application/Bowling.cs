@@ -85,13 +85,11 @@ namespace GameScoring.Application
         }
 
 
-
-        /*
+        // uncomment to run Bowling
         static void Main(string[] args)
         {
-            new Tennis().Run();
+            new Bowling().Run();
         }
-        */
 
 
 

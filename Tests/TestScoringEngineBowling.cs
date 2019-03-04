@@ -11,7 +11,7 @@ namespace Tests
     [TestClass]
     public class TestScoringEngineBowling
     {
-        GameScoring.Application.Bowling game;
+        ITestBowling game;
 
         [TestInitialize]
         public void Setup()

@@ -61,6 +61,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application\Bowling.cs" />
+    <Compile Include="Application\ITestBowling.cs" />
+    <Compile Include="Application\ITestTennis.cs" />
     <Compile Include="Application\Start.cs" />
     <Compile Include="DomainAbstractions\ConsoleGameRunner.cs" />
     <Compile Include="DomainAbstractions\IGameToIConsistsOfAdapter.cs" />

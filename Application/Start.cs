@@ -9,10 +9,12 @@ namespace GameScoring.Application
 {
     class Start
     {
+        /*
         static void Main(string[] args)
         {
             new Tennis().Run();
-            // new Bowling().Run();
+            new Bowling().Run();
         }
+        */
     }
 }

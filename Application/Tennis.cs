@@ -27,7 +27,7 @@ namespace GameScoring.Application
     /// Also from the Programming Paradigms layer, the wireTo extension method, which is used to wire together instances of domain abstractions to make the application.
     /// The wireTo extension method does the following -> if one object implements an interface and another has a private field of that interface (or a list of) it wires them together. It is like a gneralized Dependency Injection setter.
     /// </summary>
-    public class Tennis : IGame
+    public class Tennis : ITestTennis
     {
         // This code is generated manually from the diagram: see TennisDiagram.png 
 
@@ -63,19 +63,19 @@ namespace GameScoring.Application
                 )
             );
 
-            scorecard = new Scorecard(
-                "--------------------------------------------\n" +
-                "| M0  |S00|S10|S20|S30|S40|S50|S60|  G0--- |\n" +
-                "| M1  |S01|S11|S21|S31|S41|S51|S61|  G1--- |\n" +
-                "--------------------------------------------\n")
-                .WireTo(new ScoreBinding<int[]>("M", () => match.GetScore()))
-                .WireTo(new ScoreBinding<List<int[]>>("S", () => GetSetScores(match)))
-                .WireTo(new ScoreBinding<string[]>("G", () => GetLastGameScore(match)));
 
 
-            consolerunner = new ConsoleGameRunner("Enter winner 0 or 1")
-                .WireTo(this);
-
+            consolerunner = new ConsoleGameRunner("Enter winner 0 or 1", (winner, scorer) => scorer.Ball(winner, 1))
+                .WireTo(match)
+                .WireTo(new Scorecard(
+                        "--------------------------------------------\n" +
+                        "| M0  |S00|S10|S20|S30|S40|S50|S60|  G0--- |\n" +
+                        "| M1  |S01|S11|S21|S31|S41|S51|S61|  G1--- |\n" +
+                        "--------------------------------------------\n")
+                    .WireTo(new ScoreBinding<int[]>("M", () => match.GetScore()))
+                    .WireTo(new ScoreBinding<List<int[]>>("S", () => GetSetScores(match)))
+                    .WireTo(new ScoreBinding<string[]>("G", () => GetLastGameScore(match)))
+                );
 
 
         }
@@ -92,49 +92,11 @@ namespace GameScoring.Application
             consolerunner.Run();
         }
 
-
-
-
-        // Following three functions are the interface used by whatever is running the game, such as a console runner
-        // Also used by tests
-
-
-
-
-        /// <summary>
-        /// Call this after every Tennis point. Pass in the winner as 0 or 1
-        /// </summary>
-        /// <param name="result"></param>
-        public void Play(int result)
+        static void Main(string[] args)
         {
-            match.Ball(result, 1);
+            new Tennis().Run();
         }
 
-
-
-
-        /// <summary>
-        /// Returns true when the entrie Tennis match is complete
-        /// </summary>
-        /// <returns></returns>
-        public bool IsComplete()
-        {
-            return match.IsComplete();
-        }
-
-
-
-
-        /// <summary>
-        /// Returns an ASCII string version of the current scoreboard.
-        /// </summary>
-        /// <returns></returns>
-        public string GetScore()
-        {
-            // uses two domain abstractions to express the requirements of scoring
-
-            return (scorecard as IPullDataFlow<string>).GetData();
-        }
 
 
 
@@ -169,31 +131,26 @@ namespace GameScoring.Application
         /// </summary>
         private string[] GetLastGameScore(IConsistsOf match)
         {
+            // refer to the diagram to see how each GetSubFrames goes one deeper into the scoring tree
             if (match.GetSubFrames().Count == 0) return new string[] { "", "" };  // no play yet
-            return IfFunction(
-                () => match.GetSubFrames().Count == 0,    // no plays yet
-                () => new string[] { "", "" },
-                IfFunction(
-                    // note: to understand following code, see wiring diagram of the application - you are using the GetSubFrames method to reach into the correct depth level of the score tree to the last game instance via the match, the first WinnerGetsOnePoint, the switch, the set, and the 2nd WinnerGetsOnePoint objects
-                    () => match.GetSubFrames().Last()     // WinnerGetsPoint of last set
+            var set = match.GetSubFrames().Last()         // WinnerGetsPoint of last set
                         .GetSubFrames().First()           // switch
-                        .GetSubFrames().First()           // either set or WinnerGetsPoint of tiebreak
-                        .GetType() == typeof(Frame),      // If type is Frame, it's a set, otherwise it's a WinnertakesPoint of a tiebreak
-                    () => TranslateGameScore(
-                        match.GetSubFrames().Last()       // WinnerGetsPoint of last set
-                        .GetSubFrames().First()           // switch
-                        .GetSubFrames().First()           // last set
-                        .GetSubFrames().Last()            // WinnerGetsPoint of last game
-                        .GetSubFrames().First()           // last game
-                        .GetScore()),
-                    () => match.GetSubFrames().Last()     // WinnerGetsPoint of last set
-                        .GetSubFrames().First()           // switch
-                        .GetSubFrames().First()           // WinnerGetsPoint of tiebreak
-                        .GetSubFrames().First()           // tiebreak
+                        .GetSubFrames().First();          // either set or WinnerGetsPoint of tiebreak
+            if (set.GetType() == typeof(Frame))           // its a set
+            {
+                return
+                   TranslateGameScore(
+                       set.GetSubFrames().Last()            // WinnerGetsPoint of last game
+                       .GetSubFrames().First()           // last game
+                       .GetScore());
+            }
+            else // it was a tiebreak
+            {
+                return 
+                        set.GetSubFrames().First()           // tiebreak
                         .GetScore()
-                        .Select(n => n.ToString()).ToArray() // convert from int array to string array
-                    )
-              )();
+                        .Select(n => n.ToString()).ToArray();
+            }
         }
 
 
@@ -253,13 +210,33 @@ namespace GameScoring.Application
 
 
         // used only for unit tests
-        public int NSets() { return match.GetSubFrames().Count(); }
-        public string[] GetLastGameScore() { return GetLastGameScore(match); }
-        public int[] GetMatchScore() { return match.GetScore(); }
-        public List<int[]> GetSetScores() { return GetSetScores(match); }
 
 
 
+        int ITestTennis.NSets() { return match.GetSubFrames().Count(); }
+
+        string[] ITestTennis.GetLastGameScore() { return GetLastGameScore(match); }
+
+        int[] ITestTennis.GetMatchScore() { return match.GetScore(); }
+
+        List<int[]> ITestTennis.GetSetScores() { return GetSetScores(match); }
+
+
+
+        void ITestTennis.Play(int result)
+        {
+            match.Ball(result, 1);
+        }
+
+        bool ITestTennis.IsComplete()
+        {
+            return match.IsComplete();
+        }
+
+        int ITestTennis.GetTotalScore()
+        {
+            return match.GetScore()[0];
+        }
 
 
         // returns a string representation of the entire match tree - used for debugging only

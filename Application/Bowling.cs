@@ -25,9 +25,9 @@ namespace GameScoring.Application
     ///  ScoreBinding - configure with a function that gets the score, and a single letter to identify the score. It can return a single scores, a lists of scores, or a list of list of scores and a few other variations.
     /// You also need knowledge of the WireTo extension method - if one object implements an interface and another has a private field of that interface (or a list of) it wires them together.
     /// </summary>
-    public class Bowling
+    public class Bowling : ITestBowling
     {
-        private IConsistsOf game;
+        private IConsistsOf scorerEngine;
         private Scorecard scorecard;
         private ConsoleGameRunner consolerunner;
 
@@ -37,7 +37,7 @@ namespace GameScoring.Application
             // This section of code is generated manually from the diagram
             // Go change the diagram first where you can reason about the logic, then come here and make it match the diagram
             // Note following code uses the fluent pattern - every method returns the this reference of the object it is called on.
-            game = new Frame("game")       
+            scorerEngine = new Frame("game")       
                 .setIsFrameCompleteLambda((gameNumber, frames, score) => frames == 10)
                 .WireTo(new Bonuses("bonus")                               
                     .setIsBonusesCompleteLambda((plays, score) => score < 10 || plays == 3)
@@ -46,31 +46,35 @@ namespace GameScoring.Application
                         .WireTo(new SinglePlay("SinglePlay")               
                 )));
 
-            /*
-                    // kids simple rules rules game: 5 frames, up to 3 balls each
-                    private IConsistsOf kidsGame = new Frame("game") 
-                        .setIsFrameCompleteLambda((gameNumber, frames, score) => frames==5)
-                        .WireTo(new Frame("frame")               
-                            .setIsFrameCompleteLambda((frameNumber, balls, pins) => balls==3 || pins[0] == 10)
-                                .WireTo(new SinglePlay("SinglePlay")             
-                        ));
-            */
 
 
-            consolerunner = new ConsoleGameRunner("Enter number pins:")
-                .WireTo(new IGameToIConsistsOfAdapter((pins, scorer) => scorer.Ball(0, pins))
-                    .WireTo(new Scorecard(
-                        "-------------------------------------------------------------------------------------\n" +
-                        "|F00|F01|F10|F11|F20|F21|F30|F31|F40|F41|F50|F51|F60|F61|F70|F71|F80|F81|F90|F91|F92|\n" +
-                        "|    ---+    ---+    ---+    ---+    ---+    ---+    ---+    ---+    ---+    ---+----\n" +
-                        "|  T0-  |  T1-  |  T2-  |  T3-  |  T4-  |  T5-  |  T6-  |  T7-  |  T8-  |    T9-    |\n" +
-                        "-------------------------------------------------------------------------------------\n")
-                        .WireTo(new ScoreBinding<List<List<string>>>("F", () => TranslateFrameScores(GetFrameThrowScores(game))))
-                        .WireTo(new ScoreBinding<List<int>>("T", () => GetAccumulatedFrameScores(game)))
-                    )
-                    .WireTo(game)
+            consolerunner = new ConsoleGameRunner("Enter number pins:", (pins, scorer) => scorer.Ball(0, pins))
+                .WireTo(scorerEngine)
+                .WireTo(new Scorecard(
+                    "-------------------------------------------------------------------------------------\n" +
+                    "|F00|F01|F10|F11|F20|F21|F30|F31|F40|F41|F50|F51|F60|F61|F70|F71|F80|F81|F90|F91|F92|\n" +
+                    "|    ---+    ---+    ---+    ---+    ---+    ---+    ---+    ---+    ---+    ---+----\n" +
+                    "|  T0-  |  T1-  |  T2-  |  T3-  |  T4-  |  T5-  |  T6-  |  T7-  |  T8-  |    T9-    |\n" +
+                    "-------------------------------------------------------------------------------------\n")
+                    .WireTo(new ScoreBinding<List<List<string>>>("F", 
+                        () => TranslateFrameScores(
+                            scorerEngine.GetSubFrames().Select(f => f.GetSubFrames().Select(b => b.GetScore()[0]).ToList()).ToList())))
+                    .WireTo(new ScoreBinding<List<int>>("T", 
+                        () => scorerEngine.GetSubFrames().Select(sf => sf.GetScore()[0]).Accumulate().ToList()))
                 );
         }
+
+
+
+        /*
+                // kids simple rules rules game: 5 frames, up to 3 balls each
+                private IConsistsOf kidsGame = new Frame("game") 
+                    .setIsFrameCompleteLambda((gameNumber, frames, score) => frames==5)
+                    .WireTo(new Frame("frame")               
+                        .setIsFrameCompleteLambda((frameNumber, balls, pins) => balls==3 || pins[0] == 10)
+                            .WireTo(new SinglePlay("SinglePlay")             
+                    ));
+        */
 
 
 
@@ -82,8 +86,14 @@ namespace GameScoring.Application
 
 
 
+        /*
+        static void Main(string[] args)
+        {
+            new Tennis().Run();
+        }
+        */
 
-        // Following three functions are the interface used by whatever is running the game, such as a console runner
+
 
 
 
@@ -98,7 +108,7 @@ namespace GameScoring.Application
         /// 7,0 -> "7","-"
         /// -,3 -> "-","7"
         /// 7,3 -> "7","/" 
-        /// 10,0 -> "",X
+        /// 10,0 -> "","X"
         /// 0,10 -> "-","/"
         /// additional ninth frame translations:
         /// 10,0 -> "X","-"
@@ -118,8 +128,9 @@ namespace GameScoring.Application
         /// </remarks>
         private List<List<string>> TranslateFrameScores(List<List<int>> frames)
         { 
-            // This function looks a bit daunting but actually it just methodically makes the above example tranlations of the frame pin scores needed for a real bowling scorecard 
-            // (is there an abstraction to be found in this, so that it can be expressed as a set of rules similar to those above examples, and handle tennis game scoring translations as well?)
+            // This function looks a bit daunting but actually it just methodically makes the above example tranlations of the frame pin scores needed for a real bowling scorecard
+            // The odd one out is 10,0 -> "","X" in the first 9 frames, with the X going into the second box, so deal with that separately
+            // (is there an abstraction to be found in this, so that it can be expressed as a set of rules similar to those above examples, and other game scoring translations as well, such as the 15,love in tennis?)
             List<List<string>> rv = new List<List<string>>(); 
             int frameNumber = 0;
             foreach (List<int> frame in frames)
@@ -168,32 +179,23 @@ namespace GameScoring.Application
         }
 
 
-<<<<<<< HEAD
-=======
-
-
-        public int NFrames()
-        {
-            return game.GetSubFrames().Count();
-        }
 
 
 
 
->>>>>>> 177b70c860d06c7cf6b27c8b78c0b3138c51819e
         // get a list of lists of frame ball scores
-        private List<List<int>> GetFrameThrowScores(IConsistsOf game)
+        List<List<int>> ITestBowling.GetFrameThrowScores()
         {
             // extract the individual ball scores from the score tree
-            return game.GetSubFrames().Select(f => f.GetSubFrames().Select(b => b.GetScore()[0]).ToList()).ToList();
+            return scorerEngine.GetSubFrames().Select(f => f.GetSubFrames().Select(b => b.GetScore()[0]).ToList()).ToList();
         }
 
 
 
 
-        private List<int> GetAccumulatedFrameScores(IConsistsOf game)
+        List<int> ITestBowling.GetAccumulatedFrameScores()
         {
-            return game.GetSubFrames().Select(sf => sf.GetScore()[0]).Accumulate().ToList();
+            return scorerEngine.GetSubFrames().Select(sf => sf.GetScore()[0]).Accumulate().ToList();
         }
 
 
@@ -201,29 +203,27 @@ namespace GameScoring.Application
 
         // These used only for unit testing
 
-        public int NFrames()
+        int ITestBowling.NFrames()
         {
-            return game.GetSubFrames().Count();
+            return scorerEngine.GetSubFrames().Count();
         }
 
 
-        public void Play(int result)
+        void ITestBowling.Play(int result)
         {
             // A play is a throw, result is the number of pins
-            game.Ball(0, result);  // scoring one player, so the player index is always 0.
+            scorerEngine.Ball(0, result);  // scoring one player, so the player index is always 0.
             // (if two players you need a second instance of the application, because the tree structure of Frames is different for each.)
         }
 
-        public bool IsComplete()
+        bool ITestBowling.IsComplete()
         {
-            return game.IsComplete();
+            return scorerEngine.IsComplete();
         }
 
 
 
-        public List<int> GetAccumulatedFrameScores() { return GetAccumulatedFrameScores(game); }
-        public List<List<int>> GetFrameThrowScores() { return GetFrameThrowScores(game); }
-        public int GetTotalScore() {  return game.GetScore()[0]; }
+        int ITestBowling.GetTotalScore() {  return scorerEngine.GetScore()[0]; }
 
 
 
@@ -231,7 +231,7 @@ namespace GameScoring.Application
         // A large string representing the tree structure of teh whole game - used only for debugging
         public override string ToString()
         {
-            return game.ToString();
+            return scorerEngine.ToString();
         }
 
     }

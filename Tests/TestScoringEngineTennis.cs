@@ -9,7 +9,7 @@ namespace Tests
     [TestClass]
     public class TestScoringEngineTennis
     {
-        Tennis game;
+        ITestTennis game;
 
         [TestInitialize]
         public void Setup()

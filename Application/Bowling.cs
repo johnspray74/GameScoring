@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using GameScoring.DomainAbstractions;
 using GameScoring.ProgrammingParadigms;
 using Wiring;
-using System.Text;
 
 
 namespace GameScoring.Application

@@ -9,10 +9,11 @@ namespace GameScoring.Application
 {
     /// <summary>
     /// Console UI for running games. 
-    /// Will prompt for input, pass the input to the game it is wired to, and then ask the game for an ASCII representation of the score to display. Will repeat that until the game completes.
+    /// Will prompt for input, pass the input to the scoringEngine (which is IConsistsOf), and then ask for an ASCII representation of the score to display. Repeats until the game completes.
     /// </summary>
     /// <remarks>
-    /// It uses the IGame interface to interface with a game
+    /// It uses the IConsistsOf interface to talk to the scoringEngine to update the score, and know if it's complete.
+    /// It uses a IPullDataFlow interface to get a string representation of the score.
     /// </remarks>
     public class ConsoleGameRunner
     {
@@ -26,7 +27,7 @@ namespace GameScoring.Application
 
         /// <summary>
         /// Console UI for running games. 
-        /// It will prompt for input, pass the input to the game it is wired to, and then ask the game for an ASCII representation of the score to display. Will repeat that until the game completes.
+        /// Will prompt for input, pass the input to the scoringEngine (which is IConsistsOf), and then ask for an ASCII representation of the score to display. Repeats until the game completes.
         /// </summary>
         public ConsoleGameRunner(string prompt, Action<int, IConsistsOf> play) { this.prompt = prompt; PlayLambda = play; }
 
@@ -50,10 +51,5 @@ namespace GameScoring.Application
             Console.WriteLine("GameOver");
             Console.ReadKey();
         }
-
-
-
-
-
     }
 }

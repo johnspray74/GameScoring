@@ -1,36 +1,26 @@
 digraph foo {
 graph [rankdir=LR]
 subgraph cluster_C {
-label="10-Pin Bowling"
+label="Tenpin Bowling"
 style=rounded
 #node [style=rounded]
+
 node [shape=Mrecord]
-console [label="ConsoleGameRunner|\"Enter number of pins\""]
+console [label="Console"]
 framebind [label="Binding|F"]
 totalbind [label="Binding|T"]
 game [label="Frame|\"game\"|nFrames==10"]
+bonus [label="Bonus||score\<10 \|\| plays==3"]
+frame [label="Frame|\"frame\"|frameNum\<9 && (balls==2 \|\| pins==10)\n \|\|\ (balls==2 && pins\<10 \|\| balls==3)"]
+ball [label="SinglePay"]
+
 node [shape=record]
-bowling [label="Bowling"]
 function1 [label="GetAccumulatedScores"]
 function2 [label="GetFrameScores"]
 translate [label="Translate\nX,/,- etc"]
-console -> bowling
-bowling:ne -> game
-bowling -> scoreboard
-scoreboard -> framebind -> translate -> function2
-scoreboard -> totalbind -> function1
-function1 -> game
-function2 -> game
-{rank=same framebind totalbind}
-{rank=same function1 function2}
-label="10-Pin Bowling"
-style=rounded
-#node [style=rounded]
-node [shape=Mrecord]
-game [label="Frame|\"game\"|nFrames==2"]
-bonus [label="Bonus||score\<10 \|\| plays==3"]
-frame [label="Frame|\"frame\"|frameNum\<9 && (balls==2 \|\| pins==10)\n \|\|\ (balls==2 && pins\<10 \|\| balls==3)"]
-ball [label="SinglePlay"]
+
+console -> scoreboard
+
 node [shape=plaintext]
 scoreboard [fontsize=8,label=<
 <table border='0' cellborder='1' cellspacing='0'>
@@ -40,8 +30,16 @@ scoreboard [fontsize=8,label=<
 <tr><td colspan="2" sides="LBR">T0</td><td colspan="2" sides="LBR">T1</td><td colspan="2" sides="LBR">T2</td><td colspan="2" sides="LBR">T3</td><td colspan="2" sides="LBR">T4</td><td colspan="2" sides="LBR">T5</td><td colspan="2" sides="LBR">T6</td><td colspan="2" sides="LBR">T7</td><td colspan="2" sides="LBR">T8</td><td colspan="3" sides="LBR">T9</td></tr>
 </table>
 >]
+
+
+console -> game [constraint=false]
+scoreboard -> framebind -> translate -> function2 -> game
+scoreboard -> totalbind -> function1 -> game
 game -> bonus -> frame -> ball
+
+{rank=same framebind totalbind}
+{rank=same function1 function2}
+
+    
 }
 }
-
-

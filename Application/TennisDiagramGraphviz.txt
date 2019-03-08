@@ -6,19 +6,17 @@ style=rounded
 #node [style=rounded]
 node [shape=Mrecord]
 console [label="ConsoleGameRunner|\"Enter winner of play\""]
-scoreboard [label="Scoreboard| -----++----+----+----+----+----++--------\n\| M0  \|\|S00 \|S10 \|S20 \|S30 \|S40 \|\| G0---  \|\n\| M1  \|\|S01 \|S11 \|S21 \|S31 \|S41 \|\| G1---  \|\n -----++----+----+----+----+----++--------\n"]
+scoreboard [label="Scorecard| -----++----+----+----+----+----++--------\n\| M0  \|\|S00 \|S10 \|S20 \|S30 \|S40 \|\| G0---  \|\n\| M1  \|\|S01 \|S11 \|S21 \|S31 \|S41 \|\| G1---  \|\n -----++----+----+----+----+----++--------\n"]
 gamebind [label="Binding|G"]
 setbind [label="Binding|S"]
 matchbind [label="Binding|M"]
 match [label="Frame|\"match\"|score.Max()==3"]
 node [shape=record]
-tennis [label="Tennis"]
 function1 [label="GetTotalScore"]
 function2 [label="GetSetScores"]
 function3 [label="GetGameScore"]
-console -> tennis 
-tennis -> scoreboard
-tennis -> match
+console -> scoreboard
+console -> match
 scoreboard -> setbind -> function2
 scoreboard -> matchbind -> function1
 scoreboard -> gamebind -> function3

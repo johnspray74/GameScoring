@@ -12,9 +12,9 @@ setbind [label="Binding|S"]
 matchbind [label="Binding|M"]
 match [label="Frame|\"match\"|score.Max()==3"]
 node [shape=record]
-function1 [label="GetTotalScore"]
-function2 [label="GetSetScores"]
-function3 [label="GetGameScore"]
+function1 [label="GetScore()"]
+function2 [label="GetSubFrames()\n.Select(sf =\> sf.GetSubFrames().First())\n.Select(s =\> s.GetScore())\n.ToList()"]
+function3 [label="GetGameOrTieScore\n(see function)"]
 console -> scoreboard
 console -> match
 scoreboard -> setbind -> function2

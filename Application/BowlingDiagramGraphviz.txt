@@ -2,8 +2,6 @@ digraph foo {
 graph [rankdir=LR]
 subgraph cluster_C {
 label="Tenpin Bowling"
-#node [style=rounded]
-
 
 
 node [shape=Mrecord]
@@ -17,8 +15,7 @@ scoreboard [fontsize=8,label=<
 >]
 
 
-
-console [label="Console"]
+console [label="Console|Enter number of pins"]
 framebind [label="Binding|F"]
 totalbind [label="Binding|T"]
 game [label="Frame|\"game\"|nFrames==10"]
@@ -27,21 +24,20 @@ frame [label="Frame|\"frame\"|frameNum\<9 && (balls==2 \|\| pins==10)\n \|\|\ (b
 ball [label="SinglePay"]
 
 node [shape=record]
-function1 [label="GetAccumulatedScores"]
-function2 [label="GetFrameScores"]
+function1 [label="GetSubFrames()\n.Select(sf =\> sf.GetScore()[0])\n.Accumulate().ToList()"]
+function2 [label="GetSubFrames()\n.Select(f =\> f.GetSubFrames()\n.Select(b =\> b.GetScore()[0])\n.ToList()).ToList()))"]
 translate [label="Translate\nX,/,- etc"]
-
-
-
-console -> scoreboard
-console -> game
+console -> scoreboard #[constraint=false]
+console -> game 
 scoreboard -> framebind -> translate -> function2 -> game
 scoreboard -> totalbind -> function1 -> game
 game -> bonus -> frame -> ball
 
+#{rank=same console scoreboard}
+#{rank=same console totalbind}
 {rank=same framebind totalbind}
 {rank=same function1 function2}
 
-    
+
 }
 }

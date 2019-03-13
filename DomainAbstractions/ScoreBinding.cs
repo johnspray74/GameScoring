@@ -29,7 +29,7 @@ namespace GameScoring.DomainAbstractions
 
 
         /// <summary>
-        /// ALA Domain Abstraction. Binds a function that gets a score in one of a variety of types and associates it to an identying label (for example the label is on a Scorecard).
+        /// ALA Domain Abstraction. Binds a function that gets a score in one of a variety of types and associates it to an identying label (for example the letter on a Scorecard Template).
         /// </summary>
         public ScoreBinding(String l, Func<T> f) { Label = l; function = f; }
 

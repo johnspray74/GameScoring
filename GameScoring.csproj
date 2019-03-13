@@ -61,15 +61,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application\Bowling.cs" />
-    <Compile Include="Application\ITestBowling.cs" />
-    <Compile Include="Application\ITestTennis.cs" />
-    <Compile Include="Application\Start.cs" />
+    <Compile Include="DomainAbstractions\ITestBowling.cs" />
+    <Compile Include="DomainAbstractions\ITestTennis.cs" />
     <Compile Include="DomainAbstractions\ConsoleGameRunner.cs" />
     <Compile Include="DomainAbstractions\Scorecard.cs" />
     <Compile Include="DomainAbstractions\ScoreBinding.cs" />
     <Compile Include="DomainAbstractions\SinglePlay.cs" />
     <Compile Include="DomainAbstractions\Bonuses.cs" />
-    <Compile Include="DomainAbstractions\NeutralDecorator.cs" />
     <Compile Include="DomainAbstractions\Switch.cs" />
     <Compile Include="DomainAbstractions\WinnerGetsOnePoint.cs" />
     <Compile Include="ProgrammingParadigms\ExtensionMethods.cs" />
